@@ -5,86 +5,96 @@
   <title>Cipher: Piano Melody Password (Export/Import)</title>
   <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --tron-bg: #180027;
+      --tron-panel: #240047;
+      --tron-accent: #ff00ff;
+      --tron-cyan: #00fff7;
+      --tron-yellow: #ffe600;
+      --tron-outline: #701f86;
+      --tron-shadow: #3f007a;
+      --tron-deep: #12001a;
+    }
     body {
       font-family: 'Orbitron', Arial, sans-serif;
-      background: #0a0c16;
-      color: #00fff7;
+      background: var(--tron-bg);
+      color: var(--tron-cyan);
       margin: 0;
     }
     .main {
       max-width: 950px;
       margin: 2em auto;
       padding: 2.5em 2em;
-      background: linear-gradient(135deg, #1d223a 95%, #04f1f8 100%);
+      background: linear-gradient(135deg, var(--tron-panel) 95%, var(--tron-accent) 100%);
       border-radius: 1.5em;
-      box-shadow: 0 0 40px #00fff7, 0 0 8px #0ff7fb inset;
-      border: 2px solid #00fff7;
+      box-shadow: 0 0 40px var(--tron-accent), 0 0 8px var(--tron-accent) inset;
+      border: 2px solid var(--tron-accent);
     }
     h1 {
-      color: #00fff7;
-      text-shadow: 0 0 18px #00fff7, 0 0 2px #fff;
+      color: var(--tron-cyan);
+      text-shadow: 0 0 18px var(--tron-accent), 0 0 2px #fff;
       font-size: 2.2em;
       margin-bottom: 1em;
     }
     textarea, input[type="text"] {
-      background: #10121b;
-      border: 1px solid #00fff7;
-      color: #00fff7;
+      background: var(--tron-deep);
+      border: 1px solid var(--tron-cyan);
+      color: var(--tron-cyan);
       border-radius: 7px;
       font-size: 1.1em;
       padding: 0.6em;
       font-family: 'Orbitron', monospace;
       margin-bottom: 0.5em;
-      box-shadow: 0 0 8px #00fff7 inset;
+      box-shadow: 0 0 8px var(--tron-accent) inset;
     }
     button {
-      background: linear-gradient(90deg, #00fff7 60%, #00aaff 100%);
-      color: #1a1e33;
+      background: linear-gradient(90deg, var(--tron-accent) 60%, var(--tron-cyan) 100%);
+      color: var(--tron-panel);
       border: none;
       border-radius: 8px;
       padding: 0.6em 1.3em;
       font-size: 1.05em;
       font-family: 'Orbitron', Arial, sans-serif;
       cursor: pointer;
-      box-shadow: 0 0 10px #00fff7, 0 0 2px #fff inset;
+      box-shadow: 0 0 10px var(--tron-accent), 0 0 2px #fff inset;
       transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     }
     button:disabled {
-      background: #122;
+      background: #36023e;
       color: #444;
       box-shadow: none;
     }
     button:hover:not(:disabled) {
-      background: #01e0d7;
-      color: #fff;
-      box-shadow: 0 0 18px #00fff7;
+      background: var(--tron-cyan);
+      color: var(--tron-panel);
+      box-shadow: 0 0 18px var(--tron-cyan);
     }
     .label {
       font-weight: 700;
       margin-top: 1.2em;
       display: block;
-      color: #ffe600;
+      color: var(--tron-yellow);
       letter-spacing: 0.03em;
-      text-shadow: 0 0 3px #00fff7;
+      text-shadow: 0 0 3px var(--tron-accent);
     }
     .codebox, .export-box {
-      background: #181c29;
-      color: #00fff7;
+      background: #2d0041;
+      color: var(--tron-cyan);
       font-family: 'Orbitron', monospace;
       font-size: 1.1em;
       padding: 0.8em;
       border-radius: 0.6em;
       margin: 1em 0;
-      border: 1.5px solid #00fff7;
-      box-shadow: 0 0 8px #00fff7 inset;
+      border: 1.5px solid var(--tron-accent);
+      box-shadow: 0 0 8px var(--tron-accent) inset;
     }
     .piano-container {
       position: relative;
       width: 1270px;
       margin: 1em 0;
-      background: #131622;
+      background: #2c0045;
       border-radius: 1em;
-      box-shadow: 0 0 22px #00fff7, 0 0 4px #00fff7 inset;
+      box-shadow: 0 0 22px var(--tron-accent), 0 0 4px var(--tron-accent) inset;
       padding: 1em 0;
       overflow-x: auto;
     }
@@ -94,74 +104,65 @@
       z-index: 1;
     }
     .white-key {
-      width: 42px; height: 180px; border: 1px solid #00fff7; background: #0a0c16; margin-right: -1px;
+      width: 42px; height: 180px; border: 1px solid var(--tron-cyan); background: var(--tron-bg); margin-right: -1px;
       border-radius: 0 0 10px 10px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center;
       font-size: 1em;
       cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 14px #00fff7;
-      color: #00fff7;
+      box-shadow: 0 0 14px var(--tron-accent);
+      color: var(--tron-cyan);
       transition: background 0.15s;
     }
-    .white-key.active { background: #00fff7; color: #0a0c16; }
+    .white-key.active { background: var(--tron-accent); color: var(--tron-bg); }
     .black-key {
-      width: 30px; height: 110px; background: #051119; position: absolute; z-index: 2; top: 0;
+      width: 30px; height: 110px; background: #1d0033; position: absolute; z-index: 2; top: 0;
       margin-left: -15px; border-radius: 0 0 6px 6px; display: flex; align-items: flex-end; justify-content: center;
       font-size: 0.9em;
-      color: #00fff7; cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 10px #00fff7;
-      border: 1.5px solid #00fff7;
+      color: var(--tron-cyan); cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 10px var(--tron-accent);
+      border: 1.5px solid var(--tron-accent);
       transition: background 0.15s;
     }
-    .black-key.active { background: #00fff7; color: #222; }
+    .black-key.active { background: var(--tron-accent); color: #222; }
     .melodynote {
-      display: inline-block; padding: 2px 7px; margin-right: 2px; background: #00fff7;
-      border-radius: 4px; color: #0a0c16; font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px #00fff7;
+      display: inline-block; padding: 2px 7px; margin-right: 2px; background: var(--tron-accent);
+      border-radius: 4px; color: var(--tron-bg); font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px var(--tron-accent);
     }
-    .melodynote.playing { background: #ffe600; color: #0a0c16; }
+    .melodynote.playing { background: var(--tron-yellow); color: var(--tron-bg); }
     .outbox {
-      background: #181c29;
+      background: #2d0041;
       padding: 1.2em;
       border-radius: 0.7em;
       margin-top: 1.5em;
-      border: 1.5px solid #00fff7;
-      box-shadow: 0 0 8px #00fff7;
+      border: 1.5px solid var(--tron-accent);
+      box-shadow: 0 0 8px var(--tron-accent);
     }
     .info {
       font-size: 1em;
-      color: #00fff7;
+      color: var(--tron-cyan);
       margin-bottom: 1.2em;
-      text-shadow: 0 0 8px #00fff7;
+      text-shadow: 0 0 8px var(--tron-accent);
     }
-    .success { color: #00fff7; font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px #00fff7; }
+    .success { color: var(--tron-cyan); font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px var(--tron-accent); }
     .fail { color: #ff3700; font-weight: bold; margin-top: 1em; }
-    .hash-label { color: #ffe600; }
-    #copyHashBtn { background: #ffe600; color: #0a0c16; }
-    #copyHashBtn:hover { background: #00fff7; color: #222; }
-    ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
-    ::-webkit-scrollbar { width: 8px; background: #161b28; }
-    /* LED Switchboard Styles */
-    .led-switchboard {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 3px;
-      margin: 0.2em 0 0.8em 0;
-      min-height: 10px;
+    .hash-label { color: var(--tron-yellow); }
+    #copyHashBtn { background: var(--tron-yellow); color: var(--tron-bg); }
+    #copyHashBtn:hover { background: var(--tron-accent); color: #222; }
+    ::-webkit-scrollbar-thumb { background: var(--tron-accent); border-radius: 8px; }
+    ::-webkit-scrollbar { width: 8px; background: #1d0033; }
+    /* Keyboard toggle style */
+    .keyboard-toggle {
+      display: block;
+      margin: 1em 0 1.3em 0;
+      color: var(--tron-yellow);
+      font-weight: 600;
+      font-size: 1.07em;
+      user-select: none;
     }
-    .led-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #00fff7;
-      box-shadow: 0 0 3px #00fff7;
-      opacity: 0.85;
-      display: inline-block;
-      transition: background 0.2s;
-    }
-    .led-dot.space {
-      background: #222;
-      box-shadow: 0 0 2px #ffe600;
-      opacity: 0.5;
-      border: 1px solid #ffe600;
+    .keyboard-toggle input[type="checkbox"] {
+      accent-color: var(--tron-accent);
+      margin-right: 0.5em;
+      transform: scale(1.18);
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -181,8 +182,9 @@
     </div>
     <span class="label">Encoded Code String (copy this):</span>
     <div class="codebox" id="codeStringDisplay" contenteditable="true" spellcheck="false"></div>
-    <!-- LED Switchboard Display -->
-    <div class="led-switchboard" id="ledSwitchboard"></div>
+    <span class="label">Glyphs:</span>
+    <div class="glyphs" id="glyphsDisplay"></div>
+
     <span class="label">Piano: Play a melody (your password!)</span>
     <div class="piano-container" id="pianoContainer1">
       <div class="piano" id="piano"></div>
@@ -193,6 +195,10 @@
       <button id="saveMelodyBtn">Save Melody as Password</button>
       <button id="exportMelodyBtn">Export Melody Pattern</button>
     </div>
+    <label class="keyboard-toggle">
+      <input type="checkbox" id="toggleKeyboard" checked>
+      Enable computer keyboard for piano
+    </label>
     <div class="melodybar" id="melodyBar"></div>
     <div class="hash-flex" id="hashFlex" style="display:none;">
       <span class="hash-label">Password hash:</span>
@@ -201,6 +207,7 @@
       <span id="hashNote" style="color:#7ee787;font-size:0.92em;"></span>
     </div>
     <div id="exportBox" class="export-box" style="display:none;" title="Click to copy"></div>
+
     <div class="outbox">
       <span class="label">Paste Encoded Code String to Decode:</span>
       <textarea id="decodeInput" placeholder="Paste code here"></textarea>
@@ -226,12 +233,10 @@
   </div>
   <script>
   // --- CIPHER ---
-  // Note: Space is included as a real character in symbols for encode/decode.
   const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?! ';
   const symbolToCode = {}, codeToSymbol = {};
   for (let i = 0; i < symbols.length; ++i) {
-    // Use two characters for the code to preserve spaces and make it unambiguous
-    const code = i.toString(36).padStart(2,'0');
+    const code = i.toString(36);
     symbolToCode[symbols[i]] = code;
     codeToSymbol[code] = symbols[i];
   }
@@ -243,30 +248,19 @@
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-
-  // LED Switchboard function
-  function showLedSwitchboard(text) {
-    const board = document.getElementById('ledSwitchboard');
-    board.innerHTML = '';
-    for (let i = 0; i < text.length; ++i) {
-      const c = text[i].toUpperCase();
-      const pos = symbolToFifthsPos(c);
-      if (c === ' ') {
-        // Space: show a dim "LED"
-        const dot = document.createElement('span');
-        dot.className = 'led-dot space';
-        board.appendChild(dot);
-      } else {
-        const color = palette[pos % palette.length] || '#00fff7';
-        const dot = document.createElement('span');
-        dot.className = 'led-dot';
-        dot.style.background = color;
-        board.appendChild(dot);
-      }
-    }
+  function glyphSVG(pos) {
+    const startAngle = (pos / 12) * 2 * Math.PI;
+    const endAngle = ((pos + 1) / 12) * 2 * Math.PI;
+    const r = 20, cx = 24, cy = 24;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = 0;
+    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
+    const color = palette[pos];
+    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="11" fill="none" stroke="#fff" stroke-width="2"/></svg>`;
   }
-
-  // Use fixed-width codes for encoding/decoding (preserves spaces)
   function encodeText(text) {
     text = text.toUpperCase();
     let code = '';
@@ -277,18 +271,15 @@
     }
     return code;
   }
-  // Each character is encoded as two chars; decode accordingly
   function decodeString(str) {
     let result = '';
-    for (let i = 0; i < str.length; i += 2) {
-      let ch = str.slice(i, i + 2);
+    for (let ch of str) {
       let c = codeToSymbol[ch];
       if (!c) c = '?';
       result += c;
     }
     return result;
   }
-
   // --- PIANO ---
   // Lower octave added (C3–B3), C4–B5 as before
   const pianoWhite = [
@@ -461,6 +452,22 @@
     }
   };
 
+  // Show glyphs and code
+  function showGlyphsAndCode(text) {
+    const code = encodeText(text);
+    codeStringDisplay.textContent = code;
+    glyphsDisplay.innerHTML = '';
+    for(let c of text.toUpperCase()) {
+      let pos = symbolToFifthsPos(c);
+      glyphsDisplay.innerHTML += glyphSVG(pos);
+    }
+  }
+  encodeBtn.onclick = () => {
+    const text = encodeInput.value.trim();
+    if (!text) return;
+    showGlyphsAndCode(text);
+  };
+
   // PIANO for DECODE
   let melody2 = [];
   function addToMelody2(note) {
@@ -515,9 +522,13 @@
   renderPiano('piano', addToMelody);
   renderPiano('piano2', addToMelody2);
 
-  // Keyboard controls
+  // Keyboard controls with toggle!
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
+    // Check if keyboard control is enabled
+    const toggle = document.getElementById('toggleKeyboard');
+    if (!toggle || !toggle.checked) return;
+
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
@@ -549,18 +560,8 @@
     }
   };
 
-  // Initial values
   encodeInput.value = "TRON MELODY LOCK";
-  codeStringDisplay.textContent = encodeText(encodeInput.value);
-  showLedSwitchboard(encodeInput.value);
-
-  // Encode Button Handler
-  encodeBtn.onclick = () => {
-    const text = encodeInput.value.trim();
-    if (!text) return;
-    codeStringDisplay.textContent = encodeText(text);
-    showLedSwitchboard(text);
-  };
+  showGlyphsAndCode(encodeInput.value);
   </script>
 </body>
 </html>
