@@ -78,6 +78,33 @@
       border: 1.5px solid #00fff7;
       box-shadow: 0 0 8px #00fff7 inset;
     }
+    .glyphs-bg {
+      background: linear-gradient(90deg, #2a1853 60%, #1e1a3a 100%);
+      border-radius: 0.5em;
+      padding: 0.8em 0.5em;
+      min-height: 32px;
+      margin-bottom: 1em;
+      box-shadow: 0 0 12px #7a00ff inset;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .led {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin: 2px 3px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 6px #00fff7;
+      vertical-align: middle;
+      background-clip: padding-box;
+      user-select: text;
+    }
+    .led.space {
+      background: #44436a !important;
+      border: 1.5px dashed #fff !important;
+    }
     .piano-container {
       position: relative;
       width: 1270px;
@@ -139,18 +166,6 @@
     #copyHashBtn:hover { background: #00fff7; color: #222; }
     ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
     ::-webkit-scrollbar { width: 8px; background: #161b28; }
-
-    /* LED switchboard style */
-    .led {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      margin: 2px 2px;
-      border-radius: 50%;
-      border: 1.2px solid #fff;
-      box-shadow: 0 0 4px #00fff7;
-      vertical-align: middle;
-    }
   </style>
 </head>
 <body>
@@ -169,8 +184,8 @@
     </div>
     <span class="label">Encoded Code String (copy this):</span>
     <div class="codebox" id="codeStringDisplay" contenteditable="true" spellcheck="false"></div>
-    <span class="label">Glyphs:</span>
-    <div class="glyphs" id="glyphsDisplay"></div>
+    <span class="label">LED Switchboard:</span>
+    <div class="glyphs glyphs-bg" id="glyphsDisplay"></div>
 
     <span class="label">Piano: Play a melody (your password!)</span>
     <div class="piano-container" id="pianoContainer1">
@@ -231,8 +246,6 @@
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-  // function glyphSVG(pos) { ... } // (You can remove this function now)
-
   function encodeText(text) {
     text = text.toUpperCase();
     let code = '';
@@ -424,14 +437,15 @@
     }
   };
 
-  // Show glyphs and code (LED switchboard style)
+  // Show LED switchboard and code
   function showGlyphsAndCode(text) {
     const code = encodeText(text);
     codeStringDisplay.textContent = code;
     glyphsDisplay.innerHTML = '';
-    for(let c of text.toUpperCase()) {
+    for (let c of text.toUpperCase()) {
       let pos = symbolToFifthsPos(c);
-      glyphsDisplay.innerHTML += `<span class="led" style="background:${palette[pos]}"></span>`;
+      let isSpace = c === ' ';
+      glyphsDisplay.innerHTML += `<span class="led${isSpace ? ' space' : ''}" style="background:${isSpace ? '#44436a' : palette[pos]}"></span>`;
     }
   }
   encodeBtn.onclick = () => {
@@ -494,17 +508,24 @@
   renderPiano('piano', addToMelody);
   renderPiano('piano2', addToMelody2);
 
-  // Keyboard controls
+  // Keyboard controls - only work if NOT focused on a text input or textarea
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
+
+    // Only respond if focus is NOT in an input/textarea/contenteditable
+    const ae = document.activeElement;
+    const isInput = (ae && (
+      ae.tagName === "INPUT" ||
+      ae.tagName === "TEXTAREA" ||
+      ae.isContentEditable
+    ));
+    if (isInput) return;
+
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
-    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.getElementById('importMelodyInput')) {
-      if (match) playPianoNote(match.m, true, 'piano2'), addToMelody2(match.m);
-    } else {
-      if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
-    }
+    // If focus is not in input, send to main piano for encoding
+    if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
   });
 
   // --- Decode section ---
