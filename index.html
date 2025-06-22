@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-Sound Encoder/Decoder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tron-style visualization */
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            height: 100px;
+            gap: 1px;
+            margin-top: 1rem;
+            background-color: #0d0d1a;
+            border: 1px solid #00f0ff;
+            padding: 2px;
+        }
+        
+        .bar {
+            background: linear-gradient(to top, #00f0ff, #0066ff);
+            width: 100%;
+            transition: height 0.05s ease;
+            box-shadow: 0 0 5px #00f0ff;
+        }
+        
+        /* Animation for processing state */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .processing {
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Custom range slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-400 mb-2">TRON Sound Cipher</h1>
+            <p class="text-blue-300">Encode text as musical notes with Tron-style sound</p>
+        </header>
+        
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Mode Toggle -->
+            <div class="flex border-b">
+                <button id="encodeTab" class="flex-1 py-4 font-medium text-center bg-blue-50 text-blue-600">Encoder</button>
+                <button id="decodeTab" class="flex-1 py-4 font-medium text-center hover:bg-gray-50 text-gray-600">Decoder</button>
+            </div>
+            
+            <!-- Encoder Panel -->
+            <div id="encodePanel" class="p-6">
+                <div class="mb-6">
+                    <label for="encodeInput" class="block text-sm font-medium text-gray-700 mb-2">Text to encode</label>
+                    <textarea id="encodeInput" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter text to convert to sound..."></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="frequencyRange" class="block text-sm font-medium text-gray-700 mb-1">Base Frequency (Hz)</label>
+                        <input type="range" id="frequencyRange" min="300" max="2000" value="800" class="w-full mb-1">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>300</span>
+                            <span id="frequencyValue">800</span>
+                            <span>2000</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="speedRange" class="block text-sm font-medium text-gray-700 mb-1">Speed (chars/sec)</label>
+                        <input type="range" id="speedRange" min="1" max="10" value="4" class="w-full mb-1">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>1</span>
+                            <span id="speedValue">4</span>
+                            <span>10</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="cipherRange" class="block text-sm font-medium text-gray-700 mb-1">Cipher Complexity</label>
+                        <input type="range" id="cipherRange" min="1" max="5" value="2" class="w-full mb-1">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Simple</span>
+                            <span id="cipherValue">Medium</span>
+                            <span>Complex</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="transposeRange" class="block text-sm font-medium text-gray-700 mb-1">Transpose Notes</label>
+                        <input type="range" id="transposeRange" min="-12" max="12" value="0" class="w-full mb-1">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>-12</span>
+                            <span id="transposeValue">0</span>
+                            <span>+12</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="playEncoded" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-play mr-2"></i> Play Sound
+                    </button>
+                    <button id="stopSound" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <i class="fas fa-stop mr-2"></i> Stop
+                    </button>
+                    <button id="downloadSound" class="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <i class="fas fa-download mr-2"></i> Download
+                    </button>
+                    <button id="copyCipher" class="flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <i class="fas fa-copy mr-2"></i> Copy Cipher Key
+                    </button>
+                </div>
+                
+                <div class="visualizer hidden" id="encodeVisualizer"></div>
+                
+                <div class="bg-blue-50 p-4 rounded-md">
+                    <h3 class="text-sm font-medium text-blue-800 mb-2">Encoding Information</h3>
+                    <p class="text-xs text-blue-700">Each character is converted to a unique frequency based on the cipher settings. The sound will play sequentially for each character with a brief pause between characters.</p>
+                </div>
+            </div>
+            
+            <!-- Decoder Panel -->
+            <div id="decodePanel" class="p-6 hidden">
+                <div class="mb-6">
+                    <label for="decodeInput" class="block text-sm font-medium text-gray-700 mb-2">Recorded Sound</label>
+                    <div class="flex items-center gap-3 mb-3">
+                        <button id="startRecording" class="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <i class="fas fa-microphone mr-2"></i> Record
+                        </button>
+                        <button id="stopRecording" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500" disabled>
+                            <i class="fas fa-stop mr-2"></i> Stop
+                        </button>
+                        <span id="recordingStatus" class="text-sm text-gray-500">Press record to begin</span>
+                    </div>
+                    
+                    <div class="visualizer" id="decodeVisualizer"></div>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="cipherKeyInput" class="block text-sm font-medium text-gray-700 mb-2">Cipher Key (optional)</label>
+                    <input type="text" id="cipherKeyInput" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Paste cipher key if you have one...">
+                </div>
+                
+                <div class="mb-6">
+                    <label for="decodedOutput" class="block text-sm font-medium text-gray-700 mb-2">Decoded Text</label>
+                    <textarea id="decodedOutput" rows="4" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"></textarea>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button id="decodeSound" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-unlock mr-2"></i> Decode
+                    </button>
+                    <button id="clearRecording" class="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <i class="fas fa-trash-alt mr-2"></i> Clear
+                    </button>
+                    <button id="uploadSound" class="flex items-center px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        <i class="fas fa-upload mr-2"></i> Upload
+                    </button>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-md mt-6">
+                    <h3 class="text-sm font-medium text-blue-800 mb-2">Decoding Tips</h3>
+                    <ul class="text-xs text-blue-700 list-disc pl-5 space-y-1">
+                        <li>Record in a quiet environment for best results</li>
+                        <li>If you have the cipher key, enter it for more accurate decoding</li>
+                        <li>The decoder analyzes frequency patterns to reconstruct the original text</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-8 text-center text-sm text-gray-500">
+            <p>Text-Sound Cipher v1.0 | Uses Web Audio API for sound processing</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const encodeTab = document.getElementById('encodeTab');
+            const decodeTab = document.getElementById('decodeTab');
+            const encodePanel = document.getElementById('encodePanel');
+            const decodePanel = document.getElementById('decodePanel');
+            
+            // Audio context and elements
+            let audioContext;
+            let oscillator;
+            let gainNode;
+            let isPlaying = false;
+            let audioBuffer;
+            let mediaRecorder;
+            let audioChunks = [];
+            let recordingStartTime;
+            
+            // Cipher settings
+            let cipherMap = {};
+            let currentCipherKey = '';
+            
+            // Initialize the app
+            initApp();
+            
+            // Tab switching
+            encodeTab.addEventListener('click', () => {
+                encodeTab.classList.add('bg-blue-50', 'text-blue-600');
+                encodeTab.classList.remove('hover:bg-gray-50', 'text-gray-600');
+                decodeTab.classList.remove('bg-blue-50', 'text-blue-600');
+                decodeTab.classList.add('hover:bg-gray-50', 'text-gray-600');
+                encodePanel.classList.remove('hidden');
+                decodePanel.classList.add('hidden');
+            });
+            
+            decodeTab.addEventListener('click', () => {
+                decodeTab.classList.add('bg-blue-50', 'text-blue-600');
+                decodeTab.classList.remove('hover:bg-gray-50', 'text-gray-600');
+                encodeTab.classList.remove('bg-blue-50', 'text-blue-600');
+                encodeTab.classList.add('hover:bg-gray-50', 'text-gray-600');
+                decodePanel.classList.remove('hidden');
+                encodePanel.classList.add('hidden');
+            });
+            
+            // Range input updates
+            document.getElementById('frequencyRange').addEventListener('input', function() {
+                document.getElementById('frequencyValue').textContent = this.value;
+            });
+            
+            document.getElementById('speedRange').addEventListener('input', function() {
+                document.getElementById('speedValue').textContent = this.value;
+            });
+            
+            document.getElementById('cipherRange').addEventListener('input', function() {
+                const values = ['Simple', 'Medium', 'Moderate', 'Strong', 'Complex'];
+                document.getElementById('cipherValue').textContent = values[this.value - 1];
+                generateCipherMap(parseInt(this.value));
+            });
+            
+            // Encoder buttons
+            document.getElementById('playEncoded').addEventListener('click', playEncodedSound);
+            document.getElementById('stopSound').addEventListener('click', stopSound);
+            document.getElementById('downloadSound').addEventListener('click', downloadSound);
+            document.getElementById('copyCipher').addEventListener('click', copyCipherKey);
+            
+            // Decoder buttons
+            document.getElementById('startRecording').addEventListener('click', startRecording);
+            document.getElementById('stopRecording').addEventListener('click', stopRecording);
+            document.getElementById('decodeSound').addEventListener('click', decodeSound);
+            document.getElementById('clearRecording').addEventListener('click', clearRecording);
+            
+            // Initialize the app
+            function initApp() {
+                // Initialize audio context on user interaction
+                document.body.addEventListener('click', function() {
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                }, { once: true });
+                
+                // Generate initial cipher map
+                generateCipherMap();
+                
+                // Initialize visualizers
+                initVisualizers();
+            }
+            
+            // Simple musical note cipher mapping
+            function generateCipherMap() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,!?';
+                const notes = ['C','D','E','F','G','A','B'];
+                const octaves = ['3','4','5','6'];
+                
+                cipherMap = {};
+                currentCipherKey = '';
+                
+                // Map each character to a simple note (C-G) in octaves 3-6
+                for (let i = 0; i < chars.length; i++) {
+                    const note = notes[i % notes.length] + octaves[Math.floor(i / notes.length) % octaves.length];
+                    cipherMap[chars[i]] = note;
+                    
+                    if (i > 0) currentCipherKey += ' ';
+                    currentCipherKey += `${chars[i]}=${note}`;
+                }
+            }
+            
+            // Play encoded sound
+            function playEncodedSound() {
+                const text = document.getElementById('encodeInput').value;
+                if (!text.trim()) {
+                    alert('Please enter some text to encode');
+                    return;
+                }
+                
+                if (isPlaying) {
+                    stopSound();
+                    return;
+                }
+                
+                isPlaying = true;
+                document.getElementById('playEncoded').innerHTML = '<i class="fas fa-pause mr-2"></i> Pause';
+                
+                const speed = parseInt(document.getElementById('speedRange').value);
+                const charDuration = 1 / speed;
+                
+                // Show visualizer
+                const visualizer = document.getElementById('encodeVisualizer');
+                visualizer.classList.remove('hidden');
+                updateVisualizer(visualizer, 0);
+                
+                let currentCharIndex = 0;
+                
+                function playNextCharacter() {
+                    if (currentCharIndex >= text.length || !isPlaying) {
+                        stopSound();
+                        return;
+                    }
+                    
+                    const char = text[currentCharIndex];
+                    const frequency = cipherMap[char] || cipherMap[' ']; // Fallback to space if char not in map
+                    
+                    playTone(frequency, charDuration * 0.8);
+                    
+                    // Update visualizer with current character
+                    updateVisualizer(visualizer, frequency / 2000); // Normalize to 0-1 range
+                    
+                    currentCharIndex++;
+                    
+                    // Schedule next character with a small gap
+                    setTimeout(playNextCharacter, charDuration * 1000);
+                }
+                
+                playNextCharacter();
+            }
+            
+            // Play a musical note
+            function playTone(note, duration) {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Convert note to frequency
+                const freq = getNoteFrequency(note);
+                
+                oscillator = audioContext.createOscillator();
+                gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sawtooth';
+                // Add Tron-like modulation
+                const lfo = audioContext.createOscillator();
+                const lfoGain = audioContext.createGain();
+                lfo.frequency.value = 5;
+                lfoGain.gain.value = 50;
+                lfo.connect(lfoGain);
+                lfoGain.connect(oscillator.frequency);
+                lfo.start();
+                oscillator.frequency.value = freq;
+                
+                // Smooth volume envelope
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.05);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration - 0.05);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration);
+            }
+
+            // Get frequency for a musical note
+            function getNoteFrequency(note) {
+                const notes = {
+                    'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23,
+                    'G4': 392.00, 'A4': 440.00, 'B4': 493.88, 'C5': 523.25,
+                    'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99,
+                    'A5': 880.00, 'B5': 987.77, 'C6': 1046.50, 'D6': 1174.66,
+                    'E6': 1318.51, 'F6': 1396.91, 'G6': 1567.98, 'A6': 1760.00,
+                    'B6': 1975.53, 'C7': 2093.00, 'D7': 2349.32, 'E7': 2637.02,
+                    'F7': 2793.83, 'G7': 3135.96, 'A7': 3520.00, 'B7': 3951.07
+                };
+                return notes[note] || 440; // Default to A4 if note not found
+            }
+            
+            // Stop all sounds
+            function stopSound() {
+                isPlaying = false;
+                document.getElementById('playEncoded').innerHTML = '<i class="fas fa-play mr-2"></i> Play Sound';
+                
+                if (oscillator) {
+                    oscillator.stop();
+                    oscillator.disconnect();
+                }
+                
+                if (gainNode) {
+                    gainNode.disconnect();
+                }
+            }
+            
+            // Download sound as WAV
+            function downloadSound() {
+                const text = document.getElementById('encodeInput').value;
+                if (!text.trim()) {
+                    alert('Please enter some text to encode');
+                    return;
+                }
+                
+                // Create offline audio context to render the sound
+                const speed = parseInt(document.getElementById('speedRange').value);
+                const charDuration = 1 / speed;
+                const totalDuration = text.length * charDuration;
+                
+                const offlineCtx = new OfflineAudioContext(1, totalDuration * 44100, 44100);
+                const osc = offlineCtx.createOscillator();
+                const gain = offlineCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(offlineCtx.destination);
+                
+                osc.type = 'sine';
+                osc.start(0);
+                
+                let currentTime = 0;
+                
+                // Schedule all characters
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const frequency = cipherMap[char] || cipherMap[' '];
+                    
+                    osc.frequency.setValueAtTime(frequency, currentTime);
+                    
+                    // Envelope
+                    gain.gain.setValueAtTime(0, currentTime);
+                    gain.gain.linearRampToValueAtTime(0.5, currentTime + 0.05);
+                    gain.gain.linearRampToValueAtTime(0, currentTime + charDuration - 0.05);
+                    
+                    currentTime += charDuration;
+                }
+                
+                osc.stop(currentTime);
+                
+                // Render and create download
+                offlineCtx.startRendering().then(renderedBuffer => {
+                    const buffer = renderedBuffer.getChannelData(0);
+                    const wavBuffer = encodeWAV(buffer, 44100);
+                    const blob = new Blob([wavBuffer], { type: 'audio/wav' });
+                    
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    const transpose = parseInt(document.getElementById('transposeRange').value);
+                    const transposeStr = transpose !== 0 ? `_transposed${transpose > 0 ? '+' : ''}${transpose}` : '';
+                    a.download = `encoded_message${transposeStr}.wav`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                });
+            }
+            
+            // Helper to encode WAV file
+            function encodeWAV(samples, sampleRate) {
+                const buffer = new ArrayBuffer(44 + samples.length * 2);
+                const view = new DataView(buffer);
+                
+                // RIFF identifier
+                writeString(view, 0, 'RIFF');
+                // RIFF chunk length
+                view.setUint32(4, 36 + samples.length * 2, true);
+                // RIFF type
+                writeString(view, 8, 'WAVE');
+                // Format chunk identifier
+                writeString(view, 12, 'fmt ');
+                // Format chunk length
+                view.setUint32(16, 16, true);
+                // Sample format (raw)
+                view.setUint16(20, 1, true);
+                // Channel count
+                view.setUint16(22, 1, true);
+                // Sample rate
+                view.setUint32(24, sampleRate, true);
+                // Byte rate (sample rate * block align)
+                view.setUint32(28, sampleRate * 2, true);
+                // Block align (channel count * bytes per sample)
+                view.setUint16(32, 2, true);
+                // Bits per sample
+                view.setUint16(34, 16, true);
+                // Data chunk identifier
+                writeString(view, 36, 'data');
+                // Data chunk length
+                view.setUint32(40, samples.length * 2, true);
+                
+                // Write the PCM samples
+                floatTo16BitPCM(view, 44, samples);
+                
+                return view;
+            }
+            
+            function writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+            
+            function floatTo16BitPCM(view, offset, input) {
+                for (let i = 0; i < input.length; i++, offset += 2) {
+                    const s = Math.max(-1, Math.min(1, input[i]));
+                    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                }
+            }
+            
+            // Copy cipher key to clipboard
+            function copyCipherKey() {
+                navigator.clipboard.writeText(currentCipherKey).then(() => {
+                    const btn = document.getElementById('copyCipher');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+            
+            // Initialize visualizers
+            function initVisualizers() {
+                const encodeVisualizer = document.getElementById('encodeVisualizer');
+                const decodeVisualizer = document.getElementById('decodeVisualizer');
+                
+                // Create bars for visualizers
+                for (let i = 0; i < 32; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = '2px';
+                    encodeVisualizer.appendChild(bar.cloneNode());
+                    decodeVisualizer.appendChild(bar);
+                }
+            }
+            
+            // Update visualizer display
+            function updateVisualizer(visualizer, level) {
+                const bars = visualizer.querySelectorAll('.bar');
+                const baseLevel = level * 100;
+                
+                bars.forEach((bar, index) => {
+                    // Create a wave-like pattern
+                    const position = index / bars.length;
+                    const offset = Math.sin(position * Math.PI * 4) * 0.2;
+                    const height = Math.max(2, baseLevel * (0.5 + position * 0.5) + offset * 100);
+                    
+                    bar.style.height = `${height}px`;
+                    bar.style.opacity = 0.3 + (0.7 * position);
+                });
+            }
+            
+            // Start recording for decoder
+            function startRecording() {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    return;
+                }
+                
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        audioChunks = [];
+                        mediaRecorder = new MediaRecorder(stream);
+                        
+                        document.getElementById('startRecording').disabled = true;
+                        document.getElementById('stopRecording').disabled = false;
+                        document.getElementById('recordingStatus').textContent = 'Recording...';
+                        document.getElementById('recordingStatus').classList.add('text-red-600');
+                        
+                        mediaRecorder.addEventListener('dataavailable', event => {
+                            audioChunks.push(event.data);
+                        });
+                        
+                        mediaRecorder.addEventListener('stop', () => {
+                            const audioBlob = new Blob(audioChunks);
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            
+                            // For demo purposes, we'll just simulate decoding
+                            simulateDecoding();
+                        });
+                        
+                        mediaRecorder.start();
+                        recordingStartTime = Date.now();
+                        
+                        // Update recording timer
+                        const timerInterval = setInterval(() => {
+                            const seconds = Math.floor((Date.now() - recordingStartTime) / 1000);
+                            document.getElementById('recordingStatus').textContent = `Recording... ${seconds}s`;
+                        }, 1000);
+                        
+                        mediaRecorder.addEventListener('stop', () => {
+                            clearInterval(timerInterval);
+                        });
+                        
+                        // Animate visualizer while recording
+                        const visualizer = document.getElementById('decodeVisualizer');
+                        let animFrame;
+                        
+                        function animate() {
+                            // Show actual frequency peaks in visualizer
+                            const frequencies = Object.keys(cipherMap).map(k => cipherMap[k]);
+                            const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
+                            const level = (freq - baseFreq) / (frequencies[frequencies.length-1] - baseFreq);
+                            updateVisualizer(visualizer, level);
+                            animFrame = requestAnimationFrame(animate);
+                        }
+                        
+                        animate();
+                        
+                        mediaRecorder.addEventListener('stop', () => {
+                            cancelAnimationFrame(animFrame);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error accessing microphone:', err);
+                        alert('Could not access microphone. Please check permissions.');
+                    });
+            }
+            
+            // Stop recording
+            function stopRecording() {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    
+                    // Stop all tracks
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                    
+                    document.getElementById('startRecording').disabled = false;
+                    document.getElementById('stopRecording').disabled = true;
+                    document.getElementById('recordingStatus').textContent = 'Recording complete';
+                    document.getElementById('recordingStatus').classList.remove('text-red-600');
+                }
+            }
+            
+            // Simple note-based decoding
+            function simulateDecoding() {
+                document.getElementById('decodedOutput').value = 'Decoding audio...';
+                document.getElementById('decodeVisualizer').classList.add('processing');
+                
+                // Create reverse cipher map (note to character)
+                const reverseCipher = {};
+                Object.entries(cipherMap).forEach(([char, note]) => {
+                    reverseCipher[note] = char;
+                });
+                
+                // Simulate finding notes (in a real app this would come from pitch detection)
+                setTimeout(() => {
+                    let decodedText = '';
+                    const notes = Object.keys(reverseCipher);
+                    
+                    // For demo: decode first few notes in order
+                    for (let i = 0; i < Math.min(10, notes.length); i++) {
+                        decodedText += reverseCipher[notes[i]] || '?';
+                    }
+                    
+                    document.getElementById('decodedOutput').value = decodedText;
+                    document.getElementById('decodeVisualizer').classList.remove('processing');
+                }, 1000);
+            }
+            
+            // Decode sound
+            function decodeSound() {
+                if (audioChunks.length === 0) {
+                    alert('Please record some audio first');
+                    return;
+                }
+                
+                simulateDecoding();
+            }
+            
+            // Clear recording
+            function clearRecording() {
+                audioChunks = [];
+                document.getElementById('decodedOutput').value = '';
+                document.getElementById('recordingStatus').textContent = 'Press record to begin';
+                document.getElementById('decodeVisualizer').classList.remove('processing');
+                
+                const visualizer = document.getElementById('decodeVisualizer');
+                const bars = visualizer.querySelectorAll('.bar');
+                bars.forEach(bar => {
+                    bar.style.height = '2px';
+                });
+            }
+
+            // Handle sound file upload
+            document.getElementById('uploadSound').addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'audio/*';
+                
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        audioChunks = [new Blob([e.target.result])];
+                        document.getElementById('recordingStatus').textContent = `File loaded: ${file.name}`;
+                    };
+                    reader.readAsArrayBuffer(file);
+                };
+                
+                input.click();
+            });
+
+            // Transpose frequency based on semitones
+            function transposeFrequency(freq, semitones) {
+                return freq * Math.pow(2, semitones / 12);
+            }
+
+            // Update transpose value display
+            document.getElementById('transposeRange').addEventListener('input', function() {
+                const semitones = parseInt(this.value);
+                document.getElementById('transposeValue').textContent = 
+                    semitones > 0 ? `+${semitones}` : semitones;
+            });
+        });
+    </script>
+</body>
+</html>
