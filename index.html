@@ -1,6 +1,3 @@
-Here is the full code for index.html from your repo:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,6 +139,30 @@ Here is the full code for index.html from your repo:
     #copyHashBtn:hover { background: #00fff7; color: #222; }
     ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
     ::-webkit-scrollbar { width: 8px; background: #161b28; }
+    /* LED Switchboard Styles */
+    .led-switchboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      margin: 0.2em 0 0.8em 0;
+      min-height: 10px;
+    }
+    .led-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00fff7;
+      box-shadow: 0 0 3px #00fff7;
+      opacity: 0.85;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    .led-dot.space {
+      background: #222;
+      box-shadow: 0 0 2px #ffe600;
+      opacity: 0.5;
+      border: 1px solid #ffe600;
+    }
   </style>
 </head>
 <body>
@@ -160,9 +181,8 @@ Here is the full code for index.html from your repo:
     </div>
     <span class="label">Encoded Code String (copy this):</span>
     <div class="codebox" id="codeStringDisplay" contenteditable="true" spellcheck="false"></div>
-    <span class="label">Glyphs:</span>
-    <div class="glyphs" id="glyphsDisplay"></div>
-
+    <!-- LED Switchboard Display -->
+    <div class="led-switchboard" id="ledSwitchboard"></div>
     <span class="label">Piano: Play a melody (your password!)</span>
     <div class="piano-container" id="pianoContainer1">
       <div class="piano" id="piano"></div>
@@ -181,7 +201,6 @@ Here is the full code for index.html from your repo:
       <span id="hashNote" style="color:#7ee787;font-size:0.92em;"></span>
     </div>
     <div id="exportBox" class="export-box" style="display:none;" title="Click to copy"></div>
-
     <div class="outbox">
       <span class="label">Paste Encoded Code String to Decode:</span>
       <textarea id="decodeInput" placeholder="Paste code here"></textarea>
@@ -207,10 +226,12 @@ Here is the full code for index.html from your repo:
   </div>
   <script>
   // --- CIPHER ---
+  // Note: Space is included as a real character in symbols for encode/decode.
   const symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?! ';
   const symbolToCode = {}, codeToSymbol = {};
   for (let i = 0; i < symbols.length; ++i) {
-    const code = i.toString(36);
+    // Use two characters for the code to preserve spaces and make it unambiguous
+    const code = i.toString(36).padStart(2,'0');
     symbolToCode[symbols[i]] = code;
     codeToSymbol[code] = symbols[i];
   }
@@ -222,19 +243,30 @@ Here is the full code for index.html from your repo:
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-  function glyphSVG(pos) {
-    const startAngle = (pos / 12) * 2 * Math.PI;
-    const endAngle = ((pos + 1) / 12) * 2 * Math.PI;
-    const r = 20, cx = 24, cy = 24;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const largeArc = 0;
-    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
-    const color = palette[pos];
-    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="8" fill="#181c29" stroke="#fff" stroke-width="1.4"/></svg>`;
+
+  // LED Switchboard function
+  function showLedSwitchboard(text) {
+    const board = document.getElementById('ledSwitchboard');
+    board.innerHTML = '';
+    for (let i = 0; i < text.length; ++i) {
+      const c = text[i].toUpperCase();
+      const pos = symbolToFifthsPos(c);
+      if (c === ' ') {
+        // Space: show a dim "LED"
+        const dot = document.createElement('span');
+        dot.className = 'led-dot space';
+        board.appendChild(dot);
+      } else {
+        const color = palette[pos % palette.length] || '#00fff7';
+        const dot = document.createElement('span');
+        dot.className = 'led-dot';
+        dot.style.background = color;
+        board.appendChild(dot);
+      }
+    }
   }
+
+  // Use fixed-width codes for encoding/decoding (preserves spaces)
   function encodeText(text) {
     text = text.toUpperCase();
     let code = '';
@@ -245,15 +277,18 @@ Here is the full code for index.html from your repo:
     }
     return code;
   }
+  // Each character is encoded as two chars; decode accordingly
   function decodeString(str) {
     let result = '';
-    for (let ch of str) {
+    for (let i = 0; i < str.length; i += 2) {
+      let ch = str.slice(i, i + 2);
       let c = codeToSymbol[ch];
       if (!c) c = '?';
       result += c;
     }
     return result;
   }
+
   // --- PIANO ---
   // Lower octave added (C3–B3), C4–B5 as before
   const pianoWhite = [
@@ -426,22 +461,6 @@ Here is the full code for index.html from your repo:
     }
   };
 
-  // Show glyphs and code
-  function showGlyphsAndCode(text) {
-    const code = encodeText(text);
-    codeStringDisplay.textContent = code;
-    glyphsDisplay.innerHTML = '';
-    for(let c of text.toUpperCase()) {
-      let pos = symbolToFifthsPos(c);
-      glyphsDisplay.innerHTML += glyphSVG(pos);
-    }
-  }
-  encodeBtn.onclick = () => {
-    const text = encodeInput.value.trim();
-    if (!text) return;
-    showGlyphsAndCode(text);
-  };
-
   // PIANO for DECODE
   let melody2 = [];
   function addToMelody2(note) {
@@ -502,7 +521,7 @@ Here is the full code for index.html from your repo:
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
-    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.getElementById('importMelodyInput')) {
+    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.activeElement === document.getElementById('importMelodyInput')) {
       if (match) playPianoNote(match.m, true, 'piano2'), addToMelody2(match.m);
     } else {
       if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
@@ -530,11 +549,18 @@ Here is the full code for index.html from your repo:
     }
   };
 
+  // Initial values
   encodeInput.value = "TRON MELODY LOCK";
-  showGlyphsAndCode(encodeInput.value);
+  codeStringDisplay.textContent = encodeText(encodeInput.value);
+  showLedSwitchboard(encodeInput.value);
+
+  // Encode Button Handler
+  encodeBtn.onclick = () => {
+    const text = encodeInput.value.trim();
+    if (!text) return;
+    codeStringDisplay.textContent = encodeText(text);
+    showLedSwitchboard(text);
+  };
   </script>
 </body>
 </html>
-```
-
-Let me know if you need any other file, or want code as downloadable text.
