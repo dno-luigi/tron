@@ -260,25 +260,28 @@
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-  function encodeText(text) {
-    text = text.toUpperCase();
-    let code = '';
-    for (let c of text) {
-      let v = symbolToCode[c];
-      if (!v) v = symbolToCode[' '];
-      code += v;
-    }
-    return code;
+function encodeText(text) {
+  text = text.toUpperCase();
+  let code = '';
+  for (let c of text) {
+    let idx = symbols.indexOf(c);
+    if (idx === -1) idx = symbols.length - 1; // space fallback
+    let v = idx.toString(36).padStart(2, '0');
+    code += v;
   }
-  function decodeString(str) {
-    let result = '';
-    for (let i = 0; i < str.length; ++i) {
-      let c = codeToSymbol[str[i]];
-      if (!c) c = '?';
-      result += c;
-    }
-    return result;
+  return code;
+}
+
+function decodeString(str) {
+  let result = '';
+  for (let i = 0; i < str.length; i += 2) {
+    let code = str.substr(i, 2);
+    let idx = parseInt(code, 36);
+    let c = symbols[idx] ?? '?';
+    result += c;
   }
+  return result;
+}
   // --- PIANO ---
   // Lower octave added (C3–B3), C4–B5 as before
   const pianoWhite = [
