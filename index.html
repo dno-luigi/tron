@@ -2,130 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cipher: Piano Melody Password (Export/Import)</title>
+  <title>Cipher Piano Melody Lock – Multi-Track Looper</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --main-purple: #2a1853;
-      --main-purple-dark: #1d1135;
-      --main-purple-darker: #17102b;
-      --main-purple-light: #3d2173;
-      --main-accent: #7a00ff;
-      --main-accent2: #ffe600;
-      --led-space: #7a4dd3;
-      --led-border: #fff;
-      --txt-glow: #ffe600;
-      --txt-main: #00fff7;
-      --txt-dark: #0a0c16;
-    }
     body {
       font-family: 'Orbitron', Arial, sans-serif;
-      background: var(--main-purple-dark);
-      color: var(--txt-main);
+      background: #0a0c16;
+      color: #00fff7;
       margin: 0;
     }
     .main {
-      max-width: 950px;
+      max-width: 1050px;
       margin: 2em auto;
       padding: 2.5em 2em;
-      background: var(--main-purple);
+      background: linear-gradient(135deg, #1d223a 95%, #04f1f8 100%);
       border-radius: 1.5em;
-      box-shadow: 0 0 40px var(--main-accent), 0 0 16px var(--main-purple-light) inset;
-      border: 2px solid var(--main-accent);
+      box-shadow: 0 0 40px #00fff7, 0 0 8px #0ff7fb inset;
+      border: 2px solid #00fff7;
     }
     h1 {
-      color: var(--txt-main);
-      text-shadow: 0 0 18px var(--main-accent), 0 0 2px #fff;
+      color: #00fff7;
+      text-shadow: 0 0 18px #00fff7, 0 0 2px #fff;
       font-size: 2.2em;
       margin-bottom: 1em;
-    }
-    textarea, input[type="text"] {
-      background: var(--main-purple-darker);
-      border: 1px solid var(--main-accent);
-      color: var(--txt-main);
-      border-radius: 7px;
-      font-size: 1.1em;
-      padding: 0.6em;
-      font-family: 'Orbitron', monospace;
-      margin-bottom: 0.5em;
-      box-shadow: 0 0 8px var(--main-accent) inset;
-    }
-    button {
-      background: linear-gradient(90deg, var(--main-accent) 60%, #a88cff 100%);
-      color: var(--main-purple-dark);
-      border: none;
-      border-radius: 8px;
-      padding: 0.6em 1.3em;
-      font-size: 1.05em;
-      font-family: 'Orbitron', Arial, sans-serif;
-      cursor: pointer;
-      box-shadow: 0 0 10px var(--main-accent), 0 0 2px #fff inset;
-      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    }
-    button:disabled {
-      background: var(--main-purple-darker);
-      color: #444;
-      box-shadow: none;
-    }
-    button:hover:not(:disabled) {
-      background: var(--main-accent2);
-      color: var(--main-purple-dark);
-      box-shadow: 0 0 18px var(--main-accent2);
     }
     .label {
       font-weight: 700;
       margin-top: 1.2em;
       display: block;
-      color: var(--main-accent2);
+      color: #ffe600;
       letter-spacing: 0.03em;
-      text-shadow: 0 0 3px var(--main-accent);
+      text-shadow: 0 0 3px #00fff7;
     }
-    .codebox, .export-box {
-      background: var(--main-purple-darker);
-      color: var(--txt-main);
-      font-family: 'Orbitron', monospace;
-      font-size: 1.1em;
-      padding: 0.8em;
-      border-radius: 0.6em;
-      margin: 1em 0;
-      border: 1.5px solid var(--main-accent);
-      box-shadow: 0 0 8px var(--main-accent) inset;
-    }
-    /* SOLID PURPLE for LED switchboard area */
-    .glyphs-bg {
-      background: var(--main-purple-light);
-      border-radius: 0.5em;
-      padding: 0.8em 0.5em;
-      min-height: 32px;
-      margin-bottom: 1em;
-      box-shadow: 0 0 12px var(--main-accent2) inset;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .led {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      margin: 2px 4px;
-      border-radius: 50%;
-      border: 2px solid var(--led-border);
-      box-shadow: 0 0 8px var(--main-accent2);
-      vertical-align: middle;
-      background-clip: padding-box;
-      user-select: text;
-    }
-    .led.space {
-      background: var(--led-space) !important;
-      border: 2px solid var(--led-border) !important;
-    }
+    /* Piano Styles */
     .piano-container {
       position: relative;
       width: 1270px;
       margin: 1em 0;
-      background: var(--main-purple-light);
+      background: #131622;
       border-radius: 1em;
-      box-shadow: 0 0 22px var(--main-accent), 0 0 4px var(--main-accent2) inset;
+      box-shadow: 0 0 22px #00fff7, 0 0 4px #00fff7 inset;
       padding: 1em 0;
       overflow-x: auto;
     }
@@ -135,72 +52,158 @@
       z-index: 1;
     }
     .white-key {
-      width: 42px; height: 180px; border: 1px solid var(--main-accent); background: var(--main-purple); margin-right: -1px;
+      width: 42px; height: 180px; border: 1px solid #00fff7; background: #0a0c16; margin-right: -1px;
       border-radius: 0 0 10px 10px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center;
       font-size: 1em;
       cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 14px var(--main-accent2);
-      color: var(--main-accent2);
+      box-shadow: 0 0 14px #00fff7;
+      color: #00fff7;
       transition: background 0.15s;
     }
-    .white-key.active { background: var(--main-accent2); color: var(--main-purple); }
+    .white-key.active { background: #00fff7; color: #0a0c16; }
     .black-key {
-      width: 30px; height: 110px; background: #170c2e; position: absolute; z-index: 2; top: 0;
+      width: 30px; height: 110px; background: #051119; position: absolute; z-index: 2; top: 0;
       margin-left: -15px; border-radius: 0 0 6px 6px; display: flex; align-items: flex-end; justify-content: center;
       font-size: 0.9em;
-      color: var(--main-accent2); cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 10px var(--main-accent2);
-      border: 1.5px solid var(--main-accent2);
+      color: #00fff7; cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 10px #00fff7;
+      border: 1.5px solid #00fff7;
       transition: background 0.15s;
     }
-    .black-key.active { background: var(--main-accent2); color: #222; }
+    .black-key.active { background: #00fff7; color: #222; }
     .melodynote {
-      display: inline-block; padding: 2px 7px; margin-right: 2px; background: var(--main-accent2);
-      border-radius: 4px; color: var(--main-purple-dark); font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px var(--main-accent2);
+      display: inline-block; padding: 2px 7px; margin-right: 2px; background: #00fff7;
+      border-radius: 4px; color: #0a0c16; font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px #00fff7;
     }
-    .melodynote.playing { background: var(--main-accent); color: var(--main-purple-dark); }
+    .melodynote.playing { background: #ffe600; color: #0a0c16; }
+    .codebox, .export-box {
+      background: #181c29;
+      color: #00fff7;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1em;
+      padding: 0.8em;
+      border-radius: 0.6em;
+      margin: 1em 0;
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7 inset;
+    }
     .outbox {
-      background: var(--main-purple-darker);
+      background: #181c29;
       padding: 1.2em;
       border-radius: 0.7em;
       margin-top: 1.5em;
-      border: 1.5px solid var(--main-accent);
-      box-shadow: 0 0 8px var(--main-accent);
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7;
     }
     .info {
       font-size: 1em;
-      color: var(--main-accent2);
+      color: #00fff7;
       margin-bottom: 1.2em;
-      text-shadow: 0 0 8px var(--main-accent);
+      text-shadow: 0 0 8px #00fff7;
     }
-    .success { color: var(--txt-main); font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px var(--main-accent); }
+    .success { color: #00fff7; font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px #00fff7; }
     .fail { color: #ff3700; font-weight: bold; margin-top: 1em; }
-    .hash-label { color: var(--main-accent2); }
-    #copyHashBtn { background: var(--main-accent2); color: var(--main-purple-dark); }
-    #copyHashBtn:hover { background: var(--main-accent); color: #222; }
-    ::-webkit-scrollbar-thumb { background: var(--main-accent); border-radius: 8px; }
-    ::-webkit-scrollbar { width: 8px; background: var(--main-purple-dark); }
+    /* Looper/metronome controls */
+    .metronome-controls, .looper-controls {
+      margin-bottom: 1em;
+    }
+    .metronome-controls button, .looper-controls button {
+      margin-right: 0.5em;
+      margin-bottom: 0.2em;
+    }
+    .looper-controls .track-btn {
+      margin-right: 0.3em;
+      font-size: 0.97em;
+      padding: 0.35em 0.9em;
+    }
+    .looper-controls .track-label {
+      margin-right: 0.7em;
+      font-weight: bold;
+      color: #ffe600;
+    }
+    .looper-controls .track-status {
+      color: #00fff7;
+      margin-right: 1em;
+    }
+    /* Quantization toggle */
+    .quant-controls {
+      display:inline-block;
+      margin-left:1.8em;
+      font-size: 0.99em;
+      color: #ffe600;
+    }
+    .quant-controls label {
+      margin-right: 0.5em;
+    }
+    /* Save/load */
+    .trackfile-group {
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      margin: 0.6em 0 0.8em 0;
+    }
+    .trackfile-group input[type="file"] {
+      background: #10121b;
+      color: #00fff7;
+      border-radius: 8px;
+      border: 1px solid #00fff7;
+      font-size: 0.97em;
+      padding: 3px 7px;
+    }
+    /* Misc */
+    textarea, input[type="text"] {
+      background: #10121b;
+      border: 1px solid #00fff7;
+      color: #00fff7;
+      border-radius: 7px;
+      font-size: 1.1em;
+      padding: 0.6em;
+      font-family: 'Orbitron', monospace;
+      margin-bottom: 0.5em;
+      box-shadow: 0 0 8px #00fff7 inset;
+    }
+    button {
+      background: linear-gradient(90deg, #00fff7 60%, #00aaff 100%);
+      color: #1a1e33;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6em 1.3em;
+      font-size: 1.05em;
+      font-family: 'Orbitron', Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00fff7, 0 0 2px #fff inset;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    button:disabled {
+      background: #122;
+      color: #444;
+      box-shadow: none;
+    }
+    button:hover:not(:disabled) {
+      background: #01e0d7;
+      color: #fff;
+      box-shadow: 0 0 18px #00fff7;
+    }
+    ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
+    ::-webkit-scrollbar { width: 8px; background: #161b28; }
   </style>
 </head>
 <body>
   <div class="main">
-    <h1>Cipher: Piano Melody Password (Export/Import)</h1>
+    <h1>Cipher Piano Melody Lock – Multi-Track Looper</h1>
     <div class="info">
-      1. <b>Encode:</b> Type your message, click "Encode", play a melody (your password), then click "Save Melody as Password".<br>
-      2. <b>Export/Save Melody:</b> Click "Export Melody Pattern" to share with friends (they can import it to unlock).<br>
-      3. <b>Decode:</b> Paste the code string, play the correct melody or import the pattern, and click "Decode". Only the right melody will reveal the message!<br>
-      <b>Melody is hashed for privacy, but you can share the pattern string for non-musicians.</b>
+      <b>Cipher:</b> Type & encode a message. Play a melody as your password. Save the melody hash.<br>
+      <b>Looper:</b> Multi-track layer recording & playback. Overdub. Quantize. Save/load tracks. Metronome.<br>
+      <b>Tip:</b> <kbd>R</kbd>=Record, <kbd>O</kbd>=Overdub, <kbd>Space</kbd>=Play/Stop
     </div>
+    <!-- Cipher Section -->
     <span class="label">Text to Encode:</span>
     <textarea id="encodeInput" placeholder="Enter message"></textarea>
-    <div class="controls">
-      <button id="encodeBtn">Encode</button>
-    </div>
-    <span class="label">Encoded Code String (copy this):</span>
+    <button id="encodeBtn">Encode</button>
+    <span class="label">Encoded Code String:</span>
     <div class="codebox" id="codeStringDisplay" contenteditable="true" spellcheck="false"></div>
-    <span class="label">LED Switchboard:</span>
-    <div class="glyphs glyphs-bg" id="glyphsDisplay"></div>
-
+    <span class="label">Glyphs:</span>
+    <div class="glyphs" id="glyphsDisplay"></div>
     <span class="label">Piano: Play a melody (your password!)</span>
     <div class="piano-container" id="pianoContainer1">
       <div class="piano" id="piano"></div>
@@ -219,7 +222,6 @@
       <span id="hashNote" style="color:#7ee787;font-size:0.92em;"></span>
     </div>
     <div id="exportBox" class="export-box" style="display:none;" title="Click to copy"></div>
-
     <div class="outbox">
       <span class="label">Paste Encoded Code String to Decode:</span>
       <textarea id="decodeInput" placeholder="Paste code here"></textarea>
@@ -242,6 +244,40 @@
       <span class="label">Decoded Text:</span>
       <textarea id="decodedOutput" readonly></textarea>
     </div>
+
+    <!-- Metronome & Quantization Controls -->
+    <div class="metronome-controls">
+      <button id="metronomeToggleBtn">Metronome: OFF</button>
+      <label>BPM: <input type="number" id="metronomeBpm" value="120" min="30" max="300" style="width:60px;"></label>
+      <span class="quant-controls">
+        <label><input type="checkbox" id="quantizeEnabled"> Quantize</label>
+        <select id="quantizeGrid">
+          <option value="1/4">Quarter</option>
+          <option value="1/8" selected>Eighth</option>
+          <option value="1/16">Sixteenth</option>
+        </select>
+      </span>
+    </div>
+
+    <!-- Looper / Track Management -->
+    <div class="looper-controls">
+      <div>
+        <button id="newTrackBtn">New Track</button>
+        <button id="recordBtn" disabled>Record</button>
+        <button id="stopBtn" disabled>Stop</button>
+        <button id="overdubBtn" disabled>Overdub</button>
+        <button id="playAllBtn" disabled>Play All</button>
+        <button id="stopAllBtn" disabled>Stop All</button>
+      </div>
+      <div class="trackfile-group">
+        <button id="saveTracksBtn">Save Tracks</button>
+        <input type="file" id="loadTracksFile" accept=".json">
+        <button id="loadTracksBtn">Load Tracks</button>
+        <input type="text" id="loadTracksText" placeholder="Paste or drag track json here" style="width:350px;">
+      </div>
+      <div id="tracksList" style="margin-top:0.6em;"></div>
+      <span id="looperStatus" style="color:#ffe600; margin-left:1.2em;"></span>
+    </div>
   </div>
   <script>
   // --- CIPHER ---
@@ -260,29 +296,40 @@
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-function encodeText(text) {
-  text = text.toUpperCase();
-  let code = '';
-  for (let c of text) {
-    let idx = symbols.indexOf(c);
-    if (idx === -1) idx = symbols.length - 1; // space fallback
-    let v = idx.toString(36).padStart(2, '0');
-    code += v;
+  function glyphSVG(pos) {
+    const startAngle = (pos / 12) * 2 * Math.PI;
+    const endAngle = ((pos + 1) / 12) * 2 * Math.PI;
+    const r = 20, cx = 24, cy = 24;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = 0;
+    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
+    const color = palette[pos];
+    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="7" fill="#111" stroke="#fff" stroke-width="2"/></svg>`;
   }
-  return code;
-}
+  function encodeText(text) {
+    text = text.toUpperCase();
+    let code = '';
+    for (let c of text) {
+      let v = symbolToCode[c];
+      if (!v) v = symbolToCode[' '];
+      code += v;
+    }
+    return code;
+  }
+  function decodeString(str) {
+    let result = '';
+    for (let ch of str) {
+      let c = codeToSymbol[ch];
+      if (!c) c = '?';
+      result += c;
+    }
+    return result;
+  }
 
-function decodeString(str) {
-  let result = '';
-  for (let i = 0; i < str.length; i += 2) {
-    let code = str.substr(i, 2);
-    let idx = parseInt(code, 36);
-    let c = symbols[idx] ?? '?';
-    result += c;
-  }
-  return result;
-}
-  // --- PIANO ---
+  // --- PIANO DATA ---
   // Lower octave added (C3–B3), C4–B5 as before
   const pianoWhite = [
     {m:48,l:'C3'},{m:50,l:'D3'},{m:52,l:'E3'},{m:53,l:'F3'},{m:55,l:'G3'},{m:57,l:'A3'},{m:59,l:'B3'},
@@ -299,6 +346,8 @@ function decodeString(str) {
     {m:73,l:'C#5',k:'O',pos:14},{m:75,l:'D#5',k:'P',pos:15},
     {m:78,l:'F#5',pos:17},{m:80,l:'G#5',pos:18},{m:82,l:'A#5',pos:19}
   ];
+
+  // --- PIANO RENDERING ---
   function renderPiano(pianoId, melodyCb) {
     const piano = document.getElementById(pianoId);
     piano.innerHTML = '';
@@ -350,12 +399,19 @@ function decodeString(str) {
       if (k) { k.classList.add('active'); setTimeout(()=>k.classList.remove('active'),180);}
     }
   }
-  // Melody recording for ENCODE
+  // --- Melody Bar helpers ---
+  function midiToNoteName(midi) {
+    const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    return names[midi%12] + Math.floor(midi/12-1);
+  }
+
+  // --- Cipher Melody Recording (ENCRYPT) ---
   let melody = [];
   function addToMelody(note) {
     if (melody.length >= 32) return;
     melody.push(note);
     updateMelodyBar();
+    recordNoteIfNeeded(note);
   }
   function updateMelodyBar() {
     const bar = document.getElementById('melodyBar');
@@ -367,10 +423,6 @@ function decodeString(str) {
       bar.appendChild(span);
     });
   }
-  function midiToNoteName(midi) {
-    const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-    return names[midi%12] + Math.floor(midi/12-1);
-  }
   document.getElementById('clearMelodyBtn').onclick = ()=>{
     melody=[];
     updateMelodyBar();
@@ -378,7 +430,6 @@ function decodeString(str) {
     document.getElementById('exportBox').style.display = 'none';
   };
   document.getElementById('playMelodyBtn').onclick = ()=>playMelody(melody);
-
   function playMelody(mel) {
     if (!mel || !mel.length) return;
     let i=0;
@@ -408,14 +459,12 @@ function decodeString(str) {
     o.start();
     o.stop(ctx.currentTime + 0.19);
   }
-
   // Melody hash helpers
   async function hashMelody(mel) {
     const bytes = new Uint8Array(mel);
     const hashBuf = await window.crypto.subtle.digest('SHA-256', bytes);
     return Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,'0')).join('');
   }
-
   let passwordHash = '';
   document.getElementById('saveMelodyBtn').onclick = async () => {
     if (!melody.length) { alert('Play a melody as your password!'); return; }
@@ -433,10 +482,8 @@ function decodeString(str) {
       });
     }
   };
-
   // Export melody as pattern string
   function melodyToPattern(mel) {
-    // Use base36 for compactness
     return mel.map(n=>n.toString(36)).join('-');
   }
   function patternToMelody(str) {
@@ -453,30 +500,28 @@ function decodeString(str) {
       setTimeout(()=>document.getElementById('exportBox').textContent=pat,1200);
     }
   };
-
-  // Show LED switchboard and code
+  // Show glyphs and code
   function showGlyphsAndCode(text) {
     const code = encodeText(text);
     codeStringDisplay.textContent = code;
     glyphsDisplay.innerHTML = '';
-    for (let c of text.toUpperCase()) {
+    for(let c of text.toUpperCase()) {
       let pos = symbolToFifthsPos(c);
-      let isSpace = c === ' ';
-      glyphsDisplay.innerHTML += `<span class="led${isSpace ? ' space' : ''}" style="background:${isSpace ? 'var(--led-space)' : palette[pos]}"></span>`;
+      glyphsDisplay.innerHTML += glyphSVG(pos);
     }
   }
   encodeBtn.onclick = () => {
-    const text = encodeInput.value;
+    const text = encodeInput.value.trim();
     if (!text) return;
     showGlyphsAndCode(text);
   };
-
   // PIANO for DECODE
   let melody2 = [];
   function addToMelody2(note) {
     if (melody2.length >= 32) return;
     melody2.push(note);
     updateMelodyBar2();
+    recordNoteIfNeeded(note);
   }
   function updateMelodyBar2() {
     const bar = document.getElementById('melodyBar2');
@@ -494,7 +539,6 @@ function decodeString(str) {
     document.getElementById('importMelodyInput').value = '';
   };
   document.getElementById('playMelodyBtn2').onclick = ()=>playMelody2(melody2);
-
   function playMelody2(mel) {
     if (!mel || !mel.length) return;
     let i=0;
@@ -512,7 +556,6 @@ function decodeString(str) {
     }
     playNext();
   }
-
   // Import melody pattern for decode
   document.getElementById('importMelodyBtn').onclick = ()=>{
     const pat = document.getElementById('importMelodyInput').value.trim();
@@ -520,30 +563,21 @@ function decodeString(str) {
     melody2 = patternToMelody(pat);
     updateMelodyBar2();
   };
-
   // Render both pianos
   renderPiano('piano', addToMelody);
   renderPiano('piano2', addToMelody2);
-
-  // Keyboard controls - only work if NOT focused on a text input or textarea
+  // Keyboard controls
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
-
-    // Only respond if focus is NOT in an input/textarea/contenteditable
-    const ae = document.activeElement;
-    const isInput = (ae && (
-      ae.tagName === "INPUT" ||
-      ae.tagName === "TEXTAREA" ||
-      ae.isContentEditable
-    ));
-    if (isInput) return;
-
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
-    if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
+    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.activeElement === document.getElementById('importMelodyInput')) {
+      if (match) playPianoNote(match.m, true, 'piano2'), addToMelody2(match.m);
+    } else {
+      if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
+    }
   });
-
   // --- Decode section ---
   document.getElementById('decodeBtn').onclick = async () => {
     const code = decodeInput.value.trim();
@@ -564,9 +598,335 @@ function decodeString(str) {
       decodedOutput.value = '';
     }
   };
-
   encodeInput.value = "TRON MELODY LOCK";
   showGlyphsAndCode(encodeInput.value);
+
+  // --- METRONOME ---
+  let metronomeInterval = null;
+  let metronomeOn = false;
+  let metronomeBeat = 0, beatsPerBar = 4;
+  function playMetronomeClick(accent) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    o.type = 'square';
+    o.frequency.value = accent ? 1700 : 1100;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(accent ? 0.15 : 0.09, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.06);
+    o.connect(g).connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.07);
+    o.onended = ()=>ctx.close();
+  }
+  document.getElementById('metronomeToggleBtn').onclick = function() {
+    metronomeOn = !metronomeOn;
+    this.textContent = `Metronome: ${metronomeOn ? 'ON' : 'OFF'}`;
+    if(metronomeOn) {
+      let bpm = parseInt(document.getElementById('metronomeBpm').value, 10) || 120;
+      let interval = 60000 / bpm;
+      metronomeBeat = 0;
+      playMetronomeClick(true);
+      metronomeInterval = setInterval(() => {
+        playMetronomeClick(metronomeBeat===0);
+        metronomeBeat = (metronomeBeat+1) % beatsPerBar;
+      }, interval);
+    } else {
+      clearInterval(metronomeInterval);
+    }
+  };
+  document.getElementById('metronomeBpm').onchange = function() {
+    if(metronomeOn) {
+      document.getElementById('metronomeToggleBtn').click();
+      setTimeout(()=>document.getElementById('metronomeToggleBtn').click(), 50);
+    }
+  };
+
+  // --- Quantization ---
+  function getQuantizeMs() {
+    if (!document.getElementById('quantizeEnabled').checked) return 0;
+    let q = document.getElementById('quantizeGrid').value;
+    let bpm = parseInt(document.getElementById('metronomeBpm').value,10)||120;
+    let beatMs = 60000/bpm;
+    if (q==='1/4') return beatMs;
+    if (q==='1/8') return beatMs/2;
+    if (q==='1/16') return beatMs/4;
+    return 0;
+  }
+  function quantizeTime(ms) {
+    let grid = getQuantizeMs();
+    if (!grid) return ms;
+    return Math.round(ms/grid)*grid;
+  }
+
+  // --- LOOPER / MULTI-TRACK ---
+  let tracks = []; // {id, events:[{note,time}], name, color, isPlaying, dom, isMuted}
+  let currentTrack = null;
+  let isRecording = false, isOverdubbing = false, recordStart = 0;
+  let playbackHandles = []; // timeouts for playback
+  let loopLength = 0; // ms, max of all tracks
+  let looperStatus = document.getElementById('looperStatus');
+  let trackCount = 0;
+  // Utility for color cycling
+  const trackColors = ['#ffe600','#00fff7','#ff9c00','#ff00b3','#00ffb3','#ff3700','#b6ff00','#0039ff','#7a00ff'];
+  function getTrackColor(idx) { return trackColors[idx % trackColors.length]; }
+  // --- Track Management ---
+  function updateTracksList() {
+    let list = document.getElementById('tracksList');
+    list.innerHTML = '';
+    tracks.forEach((t, i) => {
+      let div = document.createElement('div');
+      div.style.marginBottom = '3px';
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      let label = document.createElement('span');
+      label.className = 'track-label';
+      label.textContent = t.name;
+      label.style.color = t.color;
+      div.appendChild(label);
+      let status = document.createElement('span');
+      status.className = 'track-status';
+      status.textContent = t.isPlaying ? '[Playing]' : t.isMuted ? '[Muted]' : '';
+      div.appendChild(status);
+      let muteBtn = document.createElement('button');
+      muteBtn.textContent = t.isMuted ? 'Unmute' : 'Mute';
+      muteBtn.className = 'track-btn';
+      muteBtn.onclick = () => {
+        t.isMuted = !t.isMuted;
+        updateTracksList();
+      };
+      div.appendChild(muteBtn);
+      let delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete';
+      delBtn.className = 'track-btn';
+      delBtn.onclick = () => {
+        if (currentTrack === t) currentTrack = null;
+        tracks = tracks.filter(tt=>tt!==t);
+        updateTracksList();
+        document.getElementById('recordBtn').disabled = !currentTrack;
+        document.getElementById('overdubBtn').disabled = !currentTrack;
+        document.getElementById('playAllBtn').disabled = tracks.length===0;
+      };
+      div.appendChild(delBtn);
+      let selectBtn = document.createElement('button');
+      selectBtn.textContent = currentTrack===t ? 'Selected' : 'Select';
+      selectBtn.className = 'track-btn';
+      selectBtn.disabled = currentTrack===t;
+      selectBtn.onclick = ()=>{
+        currentTrack = t;
+        document.getElementById('recordBtn').disabled = false;
+        document.getElementById('overdubBtn').disabled = false;
+        updateTracksList();
+      };
+      div.appendChild(selectBtn);
+      list.appendChild(div);
+      t.dom = div;
+    });
+  }
+  // --- Track Controls ---
+  document.getElementById('newTrackBtn').onclick = function() {
+    let idx = trackCount++;
+    let t = {
+      id: 'track'+idx,
+      name: 'Track '+(idx+1),
+      color: getTrackColor(idx),
+      events: [],
+      isPlaying: false,
+      isMuted: false,
+      dom: null
+    };
+    tracks.push(t);
+    currentTrack = t;
+    updateTracksList();
+    document.getElementById('recordBtn').disabled = false;
+    document.getElementById('overdubBtn').disabled = false;
+    document.getElementById('playAllBtn').disabled = false;
+    looperStatus.textContent = 'New track ready. Press Record!';
+  };
+  // --- Recording ---
+  document.getElementById('recordBtn').onclick = function() {
+    if (!currentTrack) return;
+    isRecording = true;
+    isOverdubbing = false;
+    recordStart = performance.now();
+    currentTrack.events = [];
+    looperStatus.textContent = `Recording ${currentTrack.name}...`;
+    this.disabled = true;
+    document.getElementById('overdubBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+  };
+  document.getElementById('overdubBtn').onclick = function() {
+    if (!currentTrack) return;
+    isRecording = true;
+    isOverdubbing = true;
+    recordStart = performance.now();
+    looperStatus.textContent = `Overdubbing ${currentTrack.name}...`;
+    this.disabled = true;
+    document.getElementById('recordBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+  };
+  document.getElementById('stopBtn').onclick = function() {
+    isRecording = false;
+    isOverdubbing = false;
+    looperStatus.textContent = `Stopped. ${currentTrack.events.length} notes.`;
+    document.getElementById('recordBtn').disabled = false;
+    document.getElementById('overdubBtn').disabled = false;
+    this.disabled = true;
+    document.getElementById('playAllBtn').disabled = tracks.length===0;
+    // Recalculate loop length
+    let maxLen = 0;
+    tracks.forEach(t=>{
+      if (t.events.length) {
+        let l = t.events[t.events.length-1].time;
+        if (l > maxLen) maxLen = l;
+      }
+    });
+    loopLength = maxLen+300;
+  };
+  // --- Playback ---
+  document.getElementById('playAllBtn').onclick = function() {
+    if (!tracks.length) return;
+    stopAllPlayback();
+    tracks.forEach(t => t.isPlaying = false);
+    looperStatus.textContent = 'Playing all tracks (loop)...';
+    playAllTracks();
+    document.getElementById('stopAllBtn').disabled = false;
+  };
+  document.getElementById('stopAllBtn').onclick = function() {
+    stopAllPlayback();
+    looperStatus.textContent = 'Stopped.';
+    document.getElementById('stopAllBtn').disabled = true;
+  };
+  function playAllTracks() {
+    let now = performance.now();
+    tracks.forEach((t, idx) => {
+      if (t.events.length === 0 || t.isMuted) return;
+      t.isPlaying = true;
+      t.events.forEach(ev => {
+        let h = setTimeout(()=>{
+          playPianoNote(ev.note, true, 'piano');
+        }, ev.time);
+        playbackHandles.push(h);
+      });
+    });
+    updateTracksList();
+    playbackHandles.push(setTimeout(playAllTracks, loopLength));
+  }
+  function stopAllPlayback() {
+    playbackHandles.forEach(h=>clearTimeout(h));
+    playbackHandles = [];
+    tracks.forEach(t=>t.isPlaying = false);
+    updateTracksList();
+  }
+  // --- Note Recording (Hook into your note triggers) ---
+  function recordNoteIfNeeded(note) {
+    if (isRecording && currentTrack) {
+      let t = performance.now() - recordStart;
+      t = quantizeTime(t);
+      currentTrack.events.push({note, time: t});
+    }
+  }
+  // --- Integrate with piano note triggers ---
+  // Already wrapped above
+
+  // --- Save/Load Tracks ---
+  document.getElementById('saveTracksBtn').onclick = function() {
+    const out = {
+      bpm: document.getElementById('metronomeBpm').value,
+      quant: document.getElementById('quantizeEnabled').checked,
+      grid: document.getElementById('quantizeGrid').value,
+      tracks: tracks.map(t=>({
+        name: t.name,
+        color: t.color,
+        events: t.events,
+      }))
+    };
+    const blob = new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'pianoloop-tracks.json';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{document.body.removeChild(a); URL.revokeObjectURL(url);},300);
+  };
+  document.getElementById('loadTracksBtn').onclick = function() {
+    let txt = document.getElementById('loadTracksText').value.trim();
+    if (!txt) { alert('Paste track JSON or drag file.'); return; }
+    try {
+      let data = JSON.parse(txt);
+      loadTrackData(data);
+    } catch(e) { alert('Invalid JSON'); }
+  };
+  document.getElementById('loadTracksFile').onchange = function(e) {
+    let f = e.target.files[0];
+    if (!f) return;
+    let reader = new FileReader();
+    reader.onload = function(ev) {
+      try { loadTrackData(JSON.parse(ev.target.result)); }
+      catch(e) { alert('Invalid file'); }
+    };
+    reader.readAsText(f);
+  };
+  function loadTrackData(data) {
+    if (!data.tracks) { alert('Missing tracks.'); return; }
+    tracks = [];
+    data.tracks.forEach((t,i)=>{
+      tracks.push({
+        id:'track'+(trackCount++),
+        name:t.name,
+        color:t.color||getTrackColor(i),
+        events:t.events||[],
+        isPlaying:false,
+        isMuted:false,
+        dom:null
+      });
+    });
+    document.getElementById('metronomeBpm').value = data.bpm||120;
+    document.getElementById('quantizeEnabled').checked = !!data.quant;
+    document.getElementById('quantizeGrid').value = data.grid||'1/8';
+    currentTrack = tracks[0]||null;
+    updateTracksList();
+    document.getElementById('recordBtn').disabled = !currentTrack;
+    document.getElementById('overdubBtn').disabled = !currentTrack;
+    document.getElementById('playAllBtn').disabled = tracks.length===0;
+    looperStatus.textContent = 'Tracks loaded!';
+  }
+  // --- Drag and drop paste for loading tracks ---
+  let loadTracksText = document.getElementById('loadTracksText');
+  loadTracksText.addEventListener('dragover',ev=>{ev.preventDefault(); loadTracksText.style.background='#222';});
+  loadTracksText.addEventListener('dragleave',ev=>{loadTracksText.style.background='';});
+  loadTracksText.addEventListener('drop',ev=>{
+    ev.preventDefault();
+    loadTracksText.style.background='';
+    let f = ev.dataTransfer.files[0];
+    if (!f) return;
+    let reader = new FileReader();
+    reader.onload = function(ev2) {
+      try { loadTracksText.value = ev2.target.result; }
+      catch(e) {}
+    };
+    reader.readAsText(f);
+  });
+
+  // --- Keyboard Shortcuts (Optional) ---
+  // R: Record, O: Overdub, Space: PlayAll/StopAll
+  document.addEventListener('keydown', e=>{
+    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+    if (e.key==='r' || e.key==='R') {
+      if (!document.getElementById('recordBtn').disabled) document.getElementById('recordBtn').click();
+    } else if (e.key==='o' || e.key==='O') {
+      if (!document.getElementById('overdubBtn').disabled) document.getElementById('overdubBtn').click();
+    } else if (e.key===' ') {
+      e.preventDefault();
+      if (!document.getElementById('playAllBtn').disabled) document.getElementById('playAllBtn').click();
+      else if (!document.getElementById('stopAllBtn').disabled) document.getElementById('stopAllBtn').click();
+    }
+  });
+
+  // --- Init UI ---
+  document.getElementById('recordBtn').disabled = true;
+  document.getElementById('overdubBtn').disabled = true;
+  document.getElementById('playAllBtn').disabled = true;
+  document.getElementById('stopAllBtn').disabled = true;
+  updateTracksList();
   </script>
 </body>
 </html>
