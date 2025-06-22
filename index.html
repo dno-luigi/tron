@@ -3,46 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <title>Cipher: Piano Melody Password (Export/Import)</title>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; background: #181c29; color: #e0eaff; }
-    .main { max-width: 800px; margin: 2em auto; padding: 2em; background: #222842; border-radius: 1em; }
-    textarea { width: 100%; min-height: 60px; font-size: 1.1em; }
-    .glyphs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 1em; }
-    .glyph-svg { background: #181c29; border-radius: 50%; border: 2px solid #3377ff; width: 48px; height: 48px; }
-    .controls { margin: 1em 0; }
-    button { background: #3377ff; color: #fff; border: none; border-radius: 5px; padding: 0.5em 1em; margin: 0.5em 0.25em; font-size: 1em; cursor: pointer; }
-    button:disabled { background: #444; }
-    .label { font-weight: bold; margin-top: 1em; display: block; }
-    .outbox { background: #151829; padding: 1em; border-radius: 0.5em; margin-top: 1em; }
-    .info { font-size: 0.95em; color: #8aafff; margin-bottom: 1em;}
-    .codebox { background: #1a1e33; color: #7ee787; font-family: monospace; font-size: 1.1em; padding: 0.7em; border-radius: 0.4em; margin: 1em 0; }
-    .piano-container { position: relative; width: 735px; margin: 1em 0; }
-    .piano { display: flex; position: relative; z-index: 1; }
+    body {
+      font-family: 'Orbitron', Arial, sans-serif;
+      background: #0a0c16;
+      color: #00fff7;
+      margin: 0;
+    }
+    .main {
+      max-width: 950px;
+      margin: 2em auto;
+      padding: 2.5em 2em;
+      background: linear-gradient(135deg, #1d223a 95%, #04f1f8 100%);
+      border-radius: 1.5em;
+      box-shadow: 0 0 40px #00fff7, 0 0 8px #0ff7fb inset;
+      border: 2px solid #00fff7;
+    }
+    h1 {
+      color: #00fff7;
+      text-shadow: 0 0 18px #00fff7, 0 0 2px #fff;
+      font-size: 2.2em;
+      margin-bottom: 1em;
+    }
+    textarea, input[type="text"] {
+      background: #10121b;
+      border: 1px solid #00fff7;
+      color: #00fff7;
+      border-radius: 7px;
+      font-size: 1.1em;
+      padding: 0.6em;
+      font-family: 'Orbitron', monospace;
+      margin-bottom: 0.5em;
+      box-shadow: 0 0 8px #00fff7 inset;
+    }
+    button {
+      background: linear-gradient(90deg, #00fff7 60%, #00aaff 100%);
+      color: #1a1e33;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6em 1.3em;
+      font-size: 1.05em;
+      font-family: 'Orbitron', Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00fff7, 0 0 2px #fff inset;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    button:disabled {
+      background: #122;
+      color: #444;
+      box-shadow: none;
+    }
+    button:hover:not(:disabled) {
+      background: #01e0d7;
+      color: #fff;
+      box-shadow: 0 0 18px #00fff7;
+    }
+    .label {
+      font-weight: 700;
+      margin-top: 1.2em;
+      display: block;
+      color: #ffe600;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 3px #00fff7;
+    }
+    .codebox, .export-box {
+      background: #181c29;
+      color: #00fff7;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1em;
+      padding: 0.8em;
+      border-radius: 0.6em;
+      margin: 1em 0;
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7 inset;
+    }
+    .piano-container {
+      position: relative;
+      width: 1270px;
+      margin: 1em 0;
+      background: #131622;
+      border-radius: 1em;
+      box-shadow: 0 0 22px #00fff7, 0 0 4px #00fff7 inset;
+      padding: 1em 0;
+      overflow-x: auto;
+    }
+    .piano {
+      display: flex;
+      position: relative;
+      z-index: 1;
+    }
     .white-key {
-      width: 42px; height: 180px; border: 1px solid #222; background: #fff; margin-right: -1px;
-      border-radius: 0 0 6px 6px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center; font-size: 0.95em;
+      width: 42px; height: 180px; border: 1px solid #00fff7; background: #0a0c16; margin-right: -1px;
+      border-radius: 0 0 10px 10px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center;
+      font-size: 1em;
       cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 14px #00fff7;
+      color: #00fff7;
+      transition: background 0.15s;
     }
-    .white-key.active { background: #7ee787; }
+    .white-key.active { background: #00fff7; color: #0a0c16; }
     .black-key {
-      width: 30px; height: 110px; background: #222; position: absolute; z-index: 2; top: 0;
-      margin-left: -15px; border-radius: 0 0 4px 4px; display: flex; align-items: flex-end; justify-content: center; font-size: 0.8em;
-      color: #fff; cursor: pointer; box-sizing: border-box;
+      width: 30px; height: 110px; background: #051119; position: absolute; z-index: 2; top: 0;
+      margin-left: -15px; border-radius: 0 0 6px 6px; display: flex; align-items: flex-end; justify-content: center;
+      font-size: 0.9em;
+      color: #00fff7; cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 10px #00fff7;
+      border: 1.5px solid #00fff7;
+      transition: background 0.15s;
     }
-    .black-key.active { background: #f89; }
-    .melodybar { margin: 0.5em 0; min-height: 24px; }
-    .melodynote { display: inline-block; padding: 2px 6px; margin-right: 2px; background: #333; border-radius: 4px; color: #fff; font-family: monospace; font-size: 1em; }
-    .melodynote.playing { background: #7ee787; color: #222842; }
-    .melody-controls { margin-bottom: 0.5em; }
-    .success { color: #7ee787; font-weight: bold; margin-top: 1em; }
+    .black-key.active { background: #00fff7; color: #222; }
+    .melodynote {
+      display: inline-block; padding: 2px 7px; margin-right: 2px; background: #00fff7;
+      border-radius: 4px; color: #0a0c16; font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px #00fff7;
+    }
+    .melodynote.playing { background: #ffe600; color: #0a0c16; }
+    .outbox {
+      background: #181c29;
+      padding: 1.2em;
+      border-radius: 0.7em;
+      margin-top: 1.5em;
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7;
+    }
+    .info {
+      font-size: 1em;
+      color: #00fff7;
+      margin-bottom: 1.2em;
+      text-shadow: 0 0 8px #00fff7;
+    }
+    .success { color: #00fff7; font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px #00fff7; }
     .fail { color: #ff3700; font-weight: bold; margin-top: 1em; }
-    .export-box { background: #1a1e33; color: #ffe600; font-family: monospace; font-size: 1em; padding: 0.5em; border-radius: 0.4em; margin: 0.5em 0; cursor: pointer; }
-    .import-group { margin: 0.8em 0; }
-    input[type="text"].import { width: 290px; font-size: 1em; }
-    .hash-flex { display: flex; align-items: center; gap: 0.5em; margin-top: 0.5em;}
-    #copyHashBtn { background: #7ee787; color: #222; font-size: 0.95em; padding: 0.2em 0.7em; }
-    #copyHashBtn:hover { background: #ffe600; }
-    .hash-label { font-size: 0.99em; color: #ffe600; }
+    .hash-label { color: #ffe600; }
+    #copyHashBtn { background: #ffe600; color: #0a0c16; }
+    #copyHashBtn:hover { background: #00fff7; color: #222; }
+    ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
+    ::-webkit-scrollbar { width: 8px; background: #161b28; }
   </style>
 </head>
 <body>
@@ -65,7 +161,7 @@
     <div class="glyphs" id="glyphsDisplay"></div>
 
     <span class="label">Piano: Play a melody (your password!)</span>
-    <div class="piano-container">
+    <div class="piano-container" id="pianoContainer1">
       <div class="piano" id="piano"></div>
     </div>
     <div class="melody-controls">
@@ -87,7 +183,7 @@
       <span class="label">Paste Encoded Code String to Decode:</span>
       <textarea id="decodeInput" placeholder="Paste code here"></textarea>
       <span class="label">Piano: Play the correct melody (password) to unlock:</span>
-      <div class="piano-container">
+      <div class="piano-container" id="pianoContainer2">
         <div class="piano" id="piano2"></div>
       </div>
       <div class="melody-controls">
@@ -134,7 +230,7 @@
     const largeArc = 0;
     const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
     const color = palette[pos];
-    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="4" fill="#222842"/></svg>`;
+    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="8" fill="#0a0c16" stroke="#00fff7" stroke-width="2"/></svg>`;
   }
   function encodeText(text) {
     text = text.toUpperCase();
@@ -156,17 +252,21 @@
     return result;
   }
   // --- PIANO ---
+  // Lower octave added (C3–B3), C4–B5 as before
   const pianoWhite = [
+    {m:48,l:'C3'},{m:50,l:'D3'},{m:52,l:'E3'},{m:53,l:'F3'},{m:55,l:'G3'},{m:57,l:'A3'},{m:59,l:'B3'},
     {m:60,l:'C4',k:'A'},{m:62,l:'D4',k:'S'},{m:64,l:'E4',k:'D'},
     {m:65,l:'F4',k:'F'},{m:67,l:'G4',k:'G'},{m:69,l:'A4',k:'H'},{m:71,l:'B4',k:'J'},
     {m:72,l:'C5',k:'K'},{m:74,l:'D5',k:'L'},{m:76,l:'E5',k:';'},
     {m:77,l:'F5'},{m:79,l:'G5'},{m:81,l:'A5'},{m:83,l:'B5'}
   ];
   const pianoBlack = [
-    {m:61,l:'C#4',k:'W',pos:0},{m:63,l:'D#4',k:'E',pos:1},
-    {m:66,l:'F#4',k:'T',pos:3},{m:68,l:'G#4',k:'Y',pos:4},{m:70,l:'A#4',k:'U',pos:5},
-    {m:73,l:'C#5',k:'O',pos:7},{m:75,l:'D#5',k:'P',pos:8},
-    {m:78,l:'F#5',pos:10},{m:80,l:'G#5',pos:11},{m:82,l:'A#5',pos:12}
+    {m:49,l:'C#3',pos:0},{m:51,l:'D#3',pos:1},
+    {m:54,l:'F#3',pos:3},{m:56,l:'G#3',pos:4},{m:58,l:'A#3',pos:5},
+    {m:61,l:'C#4',k:'W',pos:7},{m:63,l:'D#4',k:'E',pos:8},
+    {m:66,l:'F#4',k:'T',pos:10},{m:68,l:'G#4',k:'Y',pos:11},{m:70,l:'A#4',k:'U',pos:12},
+    {m:73,l:'C#5',k:'O',pos:14},{m:75,l:'D#5',k:'P',pos:15},
+    {m:78,l:'F#5',pos:17},{m:80,l:'G#5',pos:18},{m:82,l:'A#5',pos:19}
   ];
   function renderPiano(pianoId, melodyCb) {
     const piano = document.getElementById(pianoId);
@@ -181,8 +281,12 @@
       piano.appendChild(div);
     });
     pianoBlack.forEach(k=>{
-      const leftKey = Math.floor((k.m-60)/2)+((k.m-60)%2);
+      // Find the white key index to align black keys
+      let idx = pianoWhite.findIndex(wk => wk.m > k.m);
+      if (idx === -1) idx = pianoWhite.length - 1;
+      const leftKey = idx > 0 ? idx - 1 : 0;
       const parent = piano.children[leftKey];
+      if (!parent) return;
       const div = document.createElement('div');
       div.className = 'black-key';
       div.style.left = (leftKey*42+29)+'px';
@@ -425,7 +529,6 @@
 
   encodeInput.value = "TRON MELODY LOCK";
   showGlyphsAndCode(encodeInput.value);
-
   </script>
 </body>
 </html>
