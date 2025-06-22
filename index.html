@@ -5,113 +5,127 @@
   <title>Cipher: Piano Melody Password (Export/Import)</title>
   <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --main-purple: #2a1853;
+      --main-purple-dark: #1d1135;
+      --main-purple-darker: #17102b;
+      --main-purple-light: #3d2173;
+      --main-accent: #7a00ff;
+      --main-accent2: #ffe600;
+      --led-space: #7a4dd3;
+      --led-border: #fff;
+      --txt-glow: #ffe600;
+      --txt-main: #00fff7;
+      --txt-dark: #0a0c16;
+    }
     body {
       font-family: 'Orbitron', Arial, sans-serif;
-      background: #0a0c16;
-      color: #00fff7;
+      background: var(--main-purple-dark);
+      color: var(--txt-main);
       margin: 0;
     }
     .main {
       max-width: 950px;
       margin: 2em auto;
       padding: 2.5em 2em;
-      background: linear-gradient(135deg, #1d223a 95%, #04f1f8 100%);
+      background: var(--main-purple);
       border-radius: 1.5em;
-      box-shadow: 0 0 40px #00fff7, 0 0 8px #0ff7fb inset;
-      border: 2px solid #00fff7;
+      box-shadow: 0 0 40px var(--main-accent), 0 0 16px var(--main-purple-light) inset;
+      border: 2px solid var(--main-accent);
     }
     h1 {
-      color: #00fff7;
-      text-shadow: 0 0 18px #00fff7, 0 0 2px #fff;
+      color: var(--txt-main);
+      text-shadow: 0 0 18px var(--main-accent), 0 0 2px #fff;
       font-size: 2.2em;
       margin-bottom: 1em;
     }
     textarea, input[type="text"] {
-      background: #10121b;
-      border: 1px solid #00fff7;
-      color: #00fff7;
+      background: var(--main-purple-darker);
+      border: 1px solid var(--main-accent);
+      color: var(--txt-main);
       border-radius: 7px;
       font-size: 1.1em;
       padding: 0.6em;
       font-family: 'Orbitron', monospace;
       margin-bottom: 0.5em;
-      box-shadow: 0 0 8px #00fff7 inset;
+      box-shadow: 0 0 8px var(--main-accent) inset;
     }
     button {
-      background: linear-gradient(90deg, #00fff7 60%, #00aaff 100%);
-      color: #1a1e33;
+      background: linear-gradient(90deg, var(--main-accent) 60%, #a88cff 100%);
+      color: var(--main-purple-dark);
       border: none;
       border-radius: 8px;
       padding: 0.6em 1.3em;
       font-size: 1.05em;
       font-family: 'Orbitron', Arial, sans-serif;
       cursor: pointer;
-      box-shadow: 0 0 10px #00fff7, 0 0 2px #fff inset;
+      box-shadow: 0 0 10px var(--main-accent), 0 0 2px #fff inset;
       transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     }
     button:disabled {
-      background: #122;
+      background: var(--main-purple-darker);
       color: #444;
       box-shadow: none;
     }
     button:hover:not(:disabled) {
-      background: #01e0d7;
-      color: #fff;
-      box-shadow: 0 0 18px #00fff7;
+      background: var(--main-accent2);
+      color: var(--main-purple-dark);
+      box-shadow: 0 0 18px var(--main-accent2);
     }
     .label {
       font-weight: 700;
       margin-top: 1.2em;
       display: block;
-      color: #ffe600;
+      color: var(--main-accent2);
       letter-spacing: 0.03em;
-      text-shadow: 0 0 3px #00fff7;
+      text-shadow: 0 0 3px var(--main-accent);
     }
     .codebox, .export-box {
-      background: #181c29;
-      color: #00fff7;
+      background: var(--main-purple-darker);
+      color: var(--txt-main);
       font-family: 'Orbitron', monospace;
       font-size: 1.1em;
       padding: 0.8em;
       border-radius: 0.6em;
       margin: 1em 0;
-      border: 1.5px solid #00fff7;
-      box-shadow: 0 0 8px #00fff7 inset;
+      border: 1.5px solid var(--main-accent);
+      box-shadow: 0 0 8px var(--main-accent) inset;
     }
+    /* SOLID PURPLE for LED switchboard area */
     .glyphs-bg {
-      background: linear-gradient(90deg, #2a1853 60%, #1e1a3a 100%);
+      background: var(--main-purple-light);
       border-radius: 0.5em;
       padding: 0.8em 0.5em;
       min-height: 32px;
       margin-bottom: 1em;
-      box-shadow: 0 0 12px #7a00ff inset;
+      box-shadow: 0 0 12px var(--main-accent2) inset;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
     }
     .led {
       display: inline-block;
-      width: 18px;
-      height: 18px;
-      margin: 2px 3px;
+      width: 20px;
+      height: 20px;
+      margin: 2px 4px;
       border-radius: 50%;
-      border: 1.5px solid #fff;
-      box-shadow: 0 0 6px #00fff7;
+      border: 2px solid var(--led-border);
+      box-shadow: 0 0 8px var(--main-accent2);
       vertical-align: middle;
       background-clip: padding-box;
       user-select: text;
     }
     .led.space {
-      background: #44436a !important;
-      border: 1.5px dashed #fff !important;
+      background: var(--led-space) !important;
+      border: 2px solid var(--led-border) !important;
     }
     .piano-container {
       position: relative;
       width: 1270px;
       margin: 1em 0;
-      background: #131622;
+      background: var(--main-purple-light);
       border-radius: 1em;
-      box-shadow: 0 0 22px #00fff7, 0 0 4px #00fff7 inset;
+      box-shadow: 0 0 22px var(--main-accent), 0 0 4px var(--main-accent2) inset;
       padding: 1em 0;
       overflow-x: auto;
     }
@@ -121,51 +135,51 @@
       z-index: 1;
     }
     .white-key {
-      width: 42px; height: 180px; border: 1px solid #00fff7; background: #0a0c16; margin-right: -1px;
+      width: 42px; height: 180px; border: 1px solid var(--main-accent); background: var(--main-purple); margin-right: -1px;
       border-radius: 0 0 10px 10px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center;
       font-size: 1em;
       cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 14px #00fff7;
-      color: #00fff7;
+      box-shadow: 0 0 14px var(--main-accent2);
+      color: var(--main-accent2);
       transition: background 0.15s;
     }
-    .white-key.active { background: #00fff7; color: #0a0c16; }
+    .white-key.active { background: var(--main-accent2); color: var(--main-purple); }
     .black-key {
-      width: 30px; height: 110px; background: #051119; position: absolute; z-index: 2; top: 0;
+      width: 30px; height: 110px; background: #170c2e; position: absolute; z-index: 2; top: 0;
       margin-left: -15px; border-radius: 0 0 6px 6px; display: flex; align-items: flex-end; justify-content: center;
       font-size: 0.9em;
-      color: #00fff7; cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 10px #00fff7;
-      border: 1.5px solid #00fff7;
+      color: var(--main-accent2); cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 10px var(--main-accent2);
+      border: 1.5px solid var(--main-accent2);
       transition: background 0.15s;
     }
-    .black-key.active { background: #00fff7; color: #222; }
+    .black-key.active { background: var(--main-accent2); color: #222; }
     .melodynote {
-      display: inline-block; padding: 2px 7px; margin-right: 2px; background: #00fff7;
-      border-radius: 4px; color: #0a0c16; font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px #00fff7;
+      display: inline-block; padding: 2px 7px; margin-right: 2px; background: var(--main-accent2);
+      border-radius: 4px; color: var(--main-purple-dark); font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px var(--main-accent2);
     }
-    .melodynote.playing { background: #ffe600; color: #0a0c16; }
+    .melodynote.playing { background: var(--main-accent); color: var(--main-purple-dark); }
     .outbox {
-      background: #181c29;
+      background: var(--main-purple-darker);
       padding: 1.2em;
       border-radius: 0.7em;
       margin-top: 1.5em;
-      border: 1.5px solid #00fff7;
-      box-shadow: 0 0 8px #00fff7;
+      border: 1.5px solid var(--main-accent);
+      box-shadow: 0 0 8px var(--main-accent);
     }
     .info {
       font-size: 1em;
-      color: #00fff7;
+      color: var(--main-accent2);
       margin-bottom: 1.2em;
-      text-shadow: 0 0 8px #00fff7;
+      text-shadow: 0 0 8px var(--main-accent);
     }
-    .success { color: #00fff7; font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px #00fff7; }
+    .success { color: var(--txt-main); font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px var(--main-accent); }
     .fail { color: #ff3700; font-weight: bold; margin-top: 1em; }
-    .hash-label { color: #ffe600; }
-    #copyHashBtn { background: #ffe600; color: #0a0c16; }
-    #copyHashBtn:hover { background: #00fff7; color: #222; }
-    ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
-    ::-webkit-scrollbar { width: 8px; background: #161b28; }
+    .hash-label { color: var(--main-accent2); }
+    #copyHashBtn { background: var(--main-accent2); color: var(--main-purple-dark); }
+    #copyHashBtn:hover { background: var(--main-accent); color: #222; }
+    ::-webkit-scrollbar-thumb { background: var(--main-accent); border-radius: 8px; }
+    ::-webkit-scrollbar { width: 8px; background: var(--main-purple-dark); }
   </style>
 </head>
 <body>
@@ -258,8 +272,8 @@
   }
   function decodeString(str) {
     let result = '';
-    for (let ch of str) {
-      let c = codeToSymbol[ch];
+    for (let i = 0; i < str.length; ++i) {
+      let c = codeToSymbol[str[i]];
       if (!c) c = '?';
       result += c;
     }
@@ -445,11 +459,11 @@
     for (let c of text.toUpperCase()) {
       let pos = symbolToFifthsPos(c);
       let isSpace = c === ' ';
-      glyphsDisplay.innerHTML += `<span class="led${isSpace ? ' space' : ''}" style="background:${isSpace ? '#44436a' : palette[pos]}"></span>`;
+      glyphsDisplay.innerHTML += `<span class="led${isSpace ? ' space' : ''}" style="background:${isSpace ? 'var(--led-space)' : palette[pos]}"></span>`;
     }
   }
   encodeBtn.onclick = () => {
-    const text = encodeInput.value.trim();
+    const text = encodeInput.value;
     if (!text) return;
     showGlyphsAndCode(text);
   };
@@ -524,7 +538,6 @@
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
-    // If focus is not in input, send to main piano for encoding
     if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
   });
 
