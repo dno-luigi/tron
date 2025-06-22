@@ -5,96 +5,86 @@
   <title>Cipher: Piano Melody Password (Export/Import)</title>
   <link href="https://fonts.googleapis.com/css?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --tron-bg: #180027;
-      --tron-panel: #240047;
-      --tron-accent: #ff00ff;
-      --tron-cyan: #00fff7;
-      --tron-yellow: #ffe600;
-      --tron-outline: #701f86;
-      --tron-shadow: #3f007a;
-      --tron-deep: #12001a;
-    }
     body {
       font-family: 'Orbitron', Arial, sans-serif;
-      background: var(--tron-bg);
-      color: var(--tron-cyan);
+      background: #0a0c16;
+      color: #00fff7;
       margin: 0;
     }
     .main {
       max-width: 950px;
       margin: 2em auto;
       padding: 2.5em 2em;
-      background: linear-gradient(135deg, var(--tron-panel) 95%, var(--tron-accent) 100%);
+      background: linear-gradient(135deg, #1d223a 95%, #04f1f8 100%);
       border-radius: 1.5em;
-      box-shadow: 0 0 40px var(--tron-accent), 0 0 8px var(--tron-accent) inset;
-      border: 2px solid var(--tron-accent);
+      box-shadow: 0 0 40px #00fff7, 0 0 8px #0ff7fb inset;
+      border: 2px solid #00fff7;
     }
     h1 {
-      color: var(--tron-cyan);
-      text-shadow: 0 0 18px var(--tron-accent), 0 0 2px #fff;
+      color: #00fff7;
+      text-shadow: 0 0 18px #00fff7, 0 0 2px #fff;
       font-size: 2.2em;
       margin-bottom: 1em;
     }
     textarea, input[type="text"] {
-      background: var(--tron-deep);
-      border: 1px solid var(--tron-cyan);
-      color: var(--tron-cyan);
+      background: #10121b;
+      border: 1px solid #00fff7;
+      color: #00fff7;
       border-radius: 7px;
       font-size: 1.1em;
       padding: 0.6em;
       font-family: 'Orbitron', monospace;
       margin-bottom: 0.5em;
-      box-shadow: 0 0 8px var(--tron-accent) inset;
+      box-shadow: 0 0 8px #00fff7 inset;
     }
     button {
-      background: linear-gradient(90deg, var(--tron-accent) 60%, var(--tron-cyan) 100%);
-      color: var(--tron-panel);
+      background: linear-gradient(90deg, #00fff7 60%, #00aaff 100%);
+      color: #1a1e33;
       border: none;
       border-radius: 8px;
       padding: 0.6em 1.3em;
       font-size: 1.05em;
       font-family: 'Orbitron', Arial, sans-serif;
       cursor: pointer;
-      box-shadow: 0 0 10px var(--tron-accent), 0 0 2px #fff inset;
+      box-shadow: 0 0 10px #00fff7, 0 0 2px #fff inset;
       transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     }
     button:disabled {
-      background: #36023e;
+      background: #122;
       color: #444;
       box-shadow: none;
     }
     button:hover:not(:disabled) {
-      background: var(--tron-cyan);
-      color: var(--tron-panel);
-      box-shadow: 0 0 18px var(--tron-cyan);
+      background: #01e0d7;
+      color: #fff;
+      box-shadow: 0 0 18px #00fff7;
     }
     .label {
       font-weight: 700;
       margin-top: 1.2em;
       display: block;
-      color: var(--tron-yellow);
+      color: #ffe600;
       letter-spacing: 0.03em;
-      text-shadow: 0 0 3px var(--tron-accent);
+      text-shadow: 0 0 3px #00fff7;
     }
     .codebox, .export-box {
-      background: #2d0041;
-      color: var(--tron-cyan);
+      background: #181c29;
+      color: #00fff7;
       font-family: 'Orbitron', monospace;
       font-size: 1.1em;
       padding: 0.8em;
       border-radius: 0.6em;
       margin: 1em 0;
-      border: 1.5px solid var(--tron-accent);
-      box-shadow: 0 0 8px var(--tron-accent) inset;
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7 inset;
     }
     .piano-container {
       position: relative;
       width: 1270px;
       margin: 1em 0;
-      background: #2c0045;
+      background: #131622;
       border-radius: 1em;
-      box-shadow: 0 0 22px var(--tron-accent), 0 0 4px var(--tron-accent) inset;
+      box-shadow: 0 0 22px #00fff7, 0 0 4px #00fff7 inset;
       padding: 1em 0;
       overflow-x: auto;
     }
@@ -104,64 +94,61 @@
       z-index: 1;
     }
     .white-key {
-      width: 42px; height: 180px; border: 1px solid var(--tron-cyan); background: var(--tron-bg); margin-right: -1px;
+      width: 42px; height: 180px; border: 1px solid #00fff7; background: #0a0c16; margin-right: -1px;
       border-radius: 0 0 10px 10px; position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center;
       font-size: 1em;
       cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 14px var(--tron-accent);
-      color: var(--tron-cyan);
+      box-shadow: 0 0 14px #00fff7;
+      color: #00fff7;
       transition: background 0.15s;
     }
-    .white-key.active { background: var(--tron-accent); color: var(--tron-bg); }
+    .white-key.active { background: #00fff7; color: #0a0c16; }
     .black-key {
-      width: 30px; height: 110px; background: #1d0033; position: absolute; z-index: 2; top: 0;
+      width: 30px; height: 110px; background: #051119; position: absolute; z-index: 2; top: 0;
       margin-left: -15px; border-radius: 0 0 6px 6px; display: flex; align-items: flex-end; justify-content: center;
       font-size: 0.9em;
-      color: var(--tron-cyan); cursor: pointer; box-sizing: border-box;
-      box-shadow: 0 0 10px var(--tron-accent);
-      border: 1.5px solid var(--tron-accent);
+      color: #00fff7; cursor: pointer; box-sizing: border-box;
+      box-shadow: 0 0 10px #00fff7;
+      border: 1.5px solid #00fff7;
       transition: background 0.15s;
     }
-    .black-key.active { background: var(--tron-accent); color: #222; }
+    .black-key.active { background: #00fff7; color: #222; }
     .melodynote {
-      display: inline-block; padding: 2px 7px; margin-right: 2px; background: var(--tron-accent);
-      border-radius: 4px; color: var(--tron-bg); font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px var(--tron-accent);
+      display: inline-block; padding: 2px 7px; margin-right: 2px; background: #00fff7;
+      border-radius: 4px; color: #0a0c16; font-family: 'Orbitron', monospace; font-size: 1em; box-shadow: 0 0 8px #00fff7;
     }
-    .melodynote.playing { background: var(--tron-yellow); color: var(--tron-bg); }
+    .melodynote.playing { background: #ffe600; color: #0a0c16; }
     .outbox {
-      background: #2d0041;
+      background: #181c29;
       padding: 1.2em;
       border-radius: 0.7em;
       margin-top: 1.5em;
-      border: 1.5px solid var(--tron-accent);
-      box-shadow: 0 0 8px var(--tron-accent);
+      border: 1.5px solid #00fff7;
+      box-shadow: 0 0 8px #00fff7;
     }
     .info {
       font-size: 1em;
-      color: var(--tron-cyan);
+      color: #00fff7;
       margin-bottom: 1.2em;
-      text-shadow: 0 0 8px var(--tron-accent);
+      text-shadow: 0 0 8px #00fff7;
     }
-    .success { color: var(--tron-cyan); font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px var(--tron-accent); }
+    .success { color: #00fff7; font-weight: bold; margin-top: 1em; text-shadow: 0 0 6px #00fff7; }
     .fail { color: #ff3700; font-weight: bold; margin-top: 1em; }
-    .hash-label { color: var(--tron-yellow); }
-    #copyHashBtn { background: var(--tron-yellow); color: var(--tron-bg); }
-    #copyHashBtn:hover { background: var(--tron-accent); color: #222; }
-    ::-webkit-scrollbar-thumb { background: var(--tron-accent); border-radius: 8px; }
-    ::-webkit-scrollbar { width: 8px; background: #1d0033; }
-    /* Keyboard toggle style */
-    .keyboard-toggle {
-      display: block;
-      margin: 1em 0 1.3em 0;
-      color: var(--tron-yellow);
-      font-weight: 600;
-      font-size: 1.07em;
-      user-select: none;
-    }
-    .keyboard-toggle input[type="checkbox"] {
-      accent-color: var(--tron-accent);
-      margin-right: 0.5em;
-      transform: scale(1.18);
+    .hash-label { color: #ffe600; }
+    #copyHashBtn { background: #ffe600; color: #0a0c16; }
+    #copyHashBtn:hover { background: #00fff7; color: #222; }
+    ::-webkit-scrollbar-thumb { background: #00fff7; border-radius: 8px; }
+    ::-webkit-scrollbar { width: 8px; background: #161b28; }
+
+    /* LED switchboard style */
+    .led {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin: 2px 2px;
+      border-radius: 50%;
+      border: 1.2px solid #fff;
+      box-shadow: 0 0 4px #00fff7;
       vertical-align: middle;
     }
   </style>
@@ -195,10 +182,6 @@
       <button id="saveMelodyBtn">Save Melody as Password</button>
       <button id="exportMelodyBtn">Export Melody Pattern</button>
     </div>
-    <label class="keyboard-toggle">
-      <input type="checkbox" id="toggleKeyboard" checked>
-      Enable computer keyboard for piano
-    </label>
     <div class="melodybar" id="melodyBar"></div>
     <div class="hash-flex" id="hashFlex" style="display:none;">
       <span class="hash-label">Password hash:</span>
@@ -248,19 +231,8 @@
     const idx = symbols.indexOf(sym);
     return idx === -1 ? 11 : idx % 12;
   }
-  function glyphSVG(pos) {
-    const startAngle = (pos / 12) * 2 * Math.PI;
-    const endAngle = ((pos + 1) / 12) * 2 * Math.PI;
-    const r = 20, cx = 24, cy = 24;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const largeArc = 0;
-    const path = `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z`;
-    const color = palette[pos];
-    return `<svg class="glyph-svg" data-pos="${pos}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="${path}" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="11" fill="none" stroke="#fff" stroke-width="2"/></svg>`;
-  }
+  // function glyphSVG(pos) { ... } // (You can remove this function now)
+
   function encodeText(text) {
     text = text.toUpperCase();
     let code = '';
@@ -452,14 +424,14 @@
     }
   };
 
-  // Show glyphs and code
+  // Show glyphs and code (LED switchboard style)
   function showGlyphsAndCode(text) {
     const code = encodeText(text);
     codeStringDisplay.textContent = code;
     glyphsDisplay.innerHTML = '';
     for(let c of text.toUpperCase()) {
       let pos = symbolToFifthsPos(c);
-      glyphsDisplay.innerHTML += glyphSVG(pos);
+      glyphsDisplay.innerHTML += `<span class="led" style="background:${palette[pos]}"></span>`;
     }
   }
   encodeBtn.onclick = () => {
@@ -522,17 +494,13 @@
   renderPiano('piano', addToMelody);
   renderPiano('piano2', addToMelody2);
 
-  // Keyboard controls with toggle!
+  // Keyboard controls
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
-    // Check if keyboard control is enabled
-    const toggle = document.getElementById('toggleKeyboard');
-    if (!toggle || !toggle.checked) return;
-
     const key = e.key.toUpperCase();
     let match = pianoWhite.find(k => k.k && k.k.toUpperCase() === key);
     if (!match) match = pianoBlack.find(k => k.k && k.k.toUpperCase() === key);
-    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.activeElement === document.getElementById('importMelodyInput')) {
+    if (document.activeElement === document.getElementById('decodeInput') || document.activeElement === document.body || document.getElementById('importMelodyInput')) {
       if (match) playPianoNote(match.m, true, 'piano2'), addToMelody2(match.m);
     } else {
       if (match) playPianoNote(match.m, true, 'piano'), addToMelody(match.m);
